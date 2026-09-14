@@ -1,0 +1,7 @@
+[project]
+name = "pacman"
+version = "0.1.0"
+description = "Recreation of the famous arcade game Pac-Man with a modern Python codebase, a clean project structure, and a deployable build."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
