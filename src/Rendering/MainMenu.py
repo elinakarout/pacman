@@ -1,16 +1,14 @@
 from typing import Dict, List
 import pygame
-from CustomSurface import CustomSurface
 from Button import Button
 
 BUTTTONS = Dict[str, Button] | None
 
 
-class MainMenu(CustomSurface):
+class MainMenu(pygame.Surface):
     def __init__(self, *args, **kwargs) -> None:
         self.buttons: BUTTTONS = {}
         super().__init__(*args, **kwargs)
-        self.keys.update({pygame.K_RETURN: "level_01"})
 
     def buttons_init(self, width: int, height: int) -> List[Button]:
         OFFSET = 100
@@ -71,19 +69,22 @@ class MainMenu(CustomSurface):
         for b in self.buttons.values():
             b.draw(self)
         while run:
-            key = self.check_key_press()
-            if key:
-                return self.keys[key]
-            buttons = pygame.mouse.get_pressed()
-            if buttons[0]:
-                button = self.check_button_clicked()
-                if button.name == "start":
-                    return "level_01"
-                elif button.name == "highscore":
-                    print("WEEEE")
-                    return "highscore"
-                elif button.name == "exit":
-                    return ""
+            events = pygame.event.get()
+            for e in events:
+                if e.type == pygame.QUIT:
+                    return False
+                if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_RETURN:
+                        return "level_01"
+                if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
+                    button = self.check_button_clicked()
+                    if button is not None:
+                        if button.name == "start":
+                            return "level_01"
+                        elif button.name == "highscore":
+                            return "highscore"
+                        elif button.name == "exit":
+                            return ""
             window.blit(self, (0, 0))
             pygame.display.update()
         return ""
