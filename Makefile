@@ -1,5 +1,3 @@
-.PHONY: install run debug clean lint lint-strict
-
 PYTHON := python3
 MAIN := pac-man.py
 CONFIG := config.json

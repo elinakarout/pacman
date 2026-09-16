@@ -4,4 +4,13 @@ version = "0.1.0"
 description = "Recreation of the famous arcade game Pac-Man with a modern Python codebase, a clean project structure, and a deployable build."
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "flake8>=7.3.0",
+    "mazegenerator",
+    "mypy>=2.3.1",
+    "pygame>=2.6.1",
+    "ruff>=0.16.7",
+]
+
+[tool.uv.sources]
+mazegenerator = { path = "mazegenerator-2.1.0-py3-none-any.whl" }
