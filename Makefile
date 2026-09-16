@@ -16,7 +16,7 @@ clean:
 	rm -rf .mypy_cache .pytest_cache
 
 lint:
-	uv run flake8 . --exclude .venv
+	uv run flake8 .
 	uv run mypy .
 
 .PHONY: install run debug clean lint

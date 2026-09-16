@@ -4,17 +4,17 @@ import os
 
 
 class Highscore(pygame.Surface):
-    def __init__(self, file_path: str, *args, **kwargs) -> None:
+    def __init__(self, file_path: str, *args: int, **kwargs: str) -> None:
         self.scores = {}
         if os.path.exists(file_path):
             with open(file_path, "r") as f:
                 self.scores = json.load(f)
         super().__init__(*args, **kwargs)
 
-    def print_empty(self):
+    def print_empty(self) -> None:
         font = pygame.font.SysFont("arial", 32)
         font_s = font.render("No highscores :(", True, pygame.Color("white"))
-        w, h= self.get_size()
+        w, h = self.get_size()
         f_w, f_h = font_s.get_size()
         title_w = (w - f_w) // 2
         title_h = (h - f_h) // 5
@@ -37,6 +37,6 @@ class Highscore(pygame.Surface):
                         run = False
                     elif e.key == pygame.K_RETURN:
                         return "main"
-            window.blit(self, (0,0))
+            window.blit(self, (0, 0))
             pygame.display.update()
         return "exit"

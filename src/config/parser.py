@@ -28,7 +28,7 @@ class Parser():
                 f"level, got {type(config_data).__name__}"
             )
         return config_data
-    
+
     @staticmethod
     def default_levels(count: int = 3) -> list[dict]:
         width, height, level_max_time = 21, 21, 90
@@ -81,14 +81,14 @@ class Parser():
         levels_data = config_data.get("levels") or self.default_levels()
         if not isinstance(levels_data, list):
             raise ValueError(
-                f"{config_file} Error: 'levels' must be a list, got "
+                f"Error: 'levels' must be a list, got "
                 f"{type(levels_data).__name__}"
             )
         self.levels = []
         for i, level in enumerate(levels_data):
             if not isinstance(level, dict):
                 raise ValueError(
-                    f"{config_file} Error: level {i + 1} must be an "
+                    f"Error: level {i + 1} must be an "
                     f"object, got {type(level).__name__}"
                 )
             parsed_level = {}
@@ -103,7 +103,7 @@ class Parser():
                 parsed_level[key] = level.get(key, default)
             self.levels.append(parsed_level)
 
-    def create_config(self):
+    def create_config(self) -> Config:
         return Config(
             highscore_filename=self.highscore_filename,
             lives=self.lives,

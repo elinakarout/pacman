@@ -21,10 +21,12 @@ class Button:
         self.clicked = False
 
     def draw(self, surface: pygame.Surface) -> None:
-        pygame.draw.rect(surface,
-                                     pygame.Color("grey"),
-                                     self.rect,
-                                     width=3)
+        pygame.draw.rect(
+            surface,
+            pygame.Color("grey"),
+            self.rect,
+            width=3
+        )
         text_surf = self.font.render(self.text, True,
                                      pygame.Color("white"))
         text_rect = text_surf.get_rect(center=self.rect.center)

@@ -6,6 +6,7 @@ from .highscore import Highscore
 
 SURFACES = Dict[str, pygame.Surface]
 
+
 class Game:
     def __init__(self):
         self.surfaces: SURFACES = {}
