@@ -15,7 +15,7 @@ class MainMenu(pygame.Surface):
         FONT = ("arial", 50)
         BUTTON_SIZE = (250, 100)
         button_x = (width - BUTTON_SIZE[0]) // 2
-        button_y = (height - BUTTON_SIZE[1]) // 3
+        button_y = (height - BUTTON_SIZE[1]) // 2
         start = Button(
             name="start",
             x=button_x,
