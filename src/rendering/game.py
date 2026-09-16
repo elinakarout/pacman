@@ -1,8 +1,8 @@
 from typing import Dict
 import pygame
-from MainMenu import MainMenu
-from Level import Level
-from Highscore import Highscore
+from .main_menu import MainMenu
+from .level import Level
+from .highscore import Highscore
 
 SURFACES = Dict[str, pygame.Surface]
 
@@ -33,7 +33,3 @@ class Game:
             print(f"Currently on: {current}")
             current = self.play_scene(window, current)
         pygame.quit()
-
-
-g = Game()
-g.start()

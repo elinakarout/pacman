@@ -1,6 +1,6 @@
 from typing import Dict, List
 import pygame
-from Button import Button
+from .button import Button
 
 BUTTTONS = Dict[str, Button] | None
 
