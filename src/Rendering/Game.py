@@ -2,7 +2,7 @@ from typing import Dict
 import pygame
 from MainMenu import MainMenu
 from Level import Level
-# from Highscore import Highscore
+from Highscore import Highscore
 
 SURFACES = Dict[str, pygame.Surface]
 
@@ -24,12 +24,13 @@ class Game:
         pygame.display.set_caption("Pac-Man")
         self.add_surface("main", MainMenu(window.get_size()))
         self.add_surface("level_01", Level((10, 10), window.get_size()))
-        # self.add_surface("highscore", Highscore("lol idk", window.get_size()))
+        self.add_surface("highscore", Highscore("lol idk", window.get_size()))
         current = "main"
         run = True
         while run:
             if not current:
                 run = False
+            print(f"Currently on: {current}")
             current = self.play_scene(window, current)
         pygame.quit()
 

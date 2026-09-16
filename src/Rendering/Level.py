@@ -2,10 +2,8 @@ from typing import Tuple
 import pygame
 from mazegenerator import MazeGenerator
 
-from CustomSurface import CustomSurface
 
-
-class Level(CustomSurface):
+class Level(pygame.Surface):
     def __init__(self, m_size: Tuple[int, int],
                  *args, **kwargs) -> None:
         self.CELL_SIZE = 50

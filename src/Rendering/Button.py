@@ -31,7 +31,4 @@ class Button:
         surface.blit(text_surf, text_rect)
 
     def check_click(self) -> bool:
-        mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
-            self.clicked = True
-        return self.clicked
+        return self.rect.collidepoint(pygame.mouse.get_pos())
