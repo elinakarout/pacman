@@ -63,4 +63,4 @@ class Level(pygame.Surface):
                         return "main"
             window.blit(self, (0, 0))
             pygame.display.update()
-        return ""
+        return "exit"

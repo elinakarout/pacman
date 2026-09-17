@@ -8,42 +8,33 @@ BUTTTONS = Dict[str, Button] | None
 class MainMenu(pygame.Surface):
     def __init__(self, *args, **kwargs) -> None:
         self.buttons: BUTTTONS = {}
+        self.states = [
+            "start",
+            "highscore",
+            "instructions",
+            "exit"
+        ]
         super().__init__(*args, **kwargs)
 
     def buttons_init(self, width: int, height: int) -> List[Button]:
         OFFSET = 100
         FONT = ("arial", 50)
-        BUTTON_SIZE = (250, 100)
+        BUTTON_SIZE = (300, 100)
         button_x = (width - BUTTON_SIZE[0]) // 2
         button_y = (height - BUTTON_SIZE[1]) // 2
-        start = Button(
-            name="start",
-            x=button_x,
-            y=button_y,
-            size=BUTTON_SIZE,
-            text="Start",
-            font=FONT[0],
-            font_s=FONT[1]
-        )
-        highscore = Button(
-            name="highscore",
-            x=button_x,
-            y=button_y + OFFSET * 1.5,
-            size=BUTTON_SIZE,
-            text="High Score",
-            font=FONT[0],
-            font_s=FONT[1]
-        )
-        exit = Button(
-            name="exit",
-            x=button_x,
-            y=button_y + OFFSET * 3,
-            size=BUTTON_SIZE,
-            text="Exit",
-            font=FONT[0],
-            font_s=FONT[1]
-        )
-        return [start, highscore, exit]
+        res = []
+        for i, n in enumerate(self.states):
+            btn = Button(
+                name=n,
+                x=button_x,
+                y=button_y + (OFFSET * (i * 1.25)),
+                size=BUTTON_SIZE,
+                text=n.capitalize(),
+                font=FONT[0],
+                font_s=FONT[1]
+            )
+            res.append(btn)
+        return res
 
     def setup(self):
         self.fill((0, 0, 0))
@@ -61,7 +52,8 @@ class MainMenu(pygame.Surface):
         self.blit(font_s, (title_w, title_h))
 
     def check_button_clicked(self):
-        return [b for b in self.buttons.values() if b.check_click()][0]
+        buttons = [b for b in self.buttons.values() if b.check_click()]
+        return buttons[0] if buttons else None
 
     def start(self, window: pygame.Surface) -> str:
         self.setup()
@@ -75,16 +67,13 @@ class MainMenu(pygame.Surface):
                     return False
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_RETURN:
-                        return "level_01"
+                        return "start"
+                    elif e.key == pygame.K_ESCAPE:
+                        run = False
                 if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
                     button = self.check_button_clicked()
                     if button is not None:
-                        if button.name == "start":
-                            return "level_01"
-                        elif button.name == "highscore":
-                            return "highscore"
-                        elif button.name == "exit":
-                            return ""
+                        return button.name
             window.blit(self, (0, 0))
             pygame.display.update()
-        return ""
+        return "exit"
