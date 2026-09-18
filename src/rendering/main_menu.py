@@ -1,12 +1,12 @@
 from typing import Dict, List
 import pygame
-from Button import Button
+from .button import Button
 
 BUTTTONS = Dict[str, Button] | None
 
 
 class MainMenu(pygame.Surface):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: int, **kwargs: str) -> None:
         self.buttons: BUTTTONS = {}
         self.states = [
             "start",
@@ -41,7 +41,7 @@ class MainMenu(pygame.Surface):
         font = pygame.font.SysFont("arial", 150)
         font_s = font.render("Pac-Man", True,
                              pygame.Color("yellow"))
-        w, h= self.get_size()
+        w, h = self.get_size()
         f_w, f_h = font_s.get_size()
         title_w = (w - f_w) // 2
         title_h = (h - f_h) // 5

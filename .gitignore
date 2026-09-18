@@ -1,5 +1,13 @@
-plan.md
+# Personal notes
+*.md
 
-#uv artifacts
+# Do not ignore README.md
+!README.md
+
+# uv artifacts
 uv.lock
 .venv
+
+# Unzipped Maze generator
+mazegenerator/
+mazegenerator-2.1.0.dist-info/

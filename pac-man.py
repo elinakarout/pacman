@@ -1,13 +1,14 @@
-import sys
-from src.config import Parser
+# import sys
+# from src.config import Parser
+from src.rendering import Game
 from pydantic import ValidationError
-from pprint import pprint
+# from pprint import pprint
 
 
 def pac_man() -> None:
-    config_file = sys.argv[1]
-    p = Parser(config_file)
-    pprint(p.data)
+    # config_file = sys.argv[1]
+    g = Game()
+    g.start()
 
 
 if __name__ == "__main__":
