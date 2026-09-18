@@ -4,6 +4,7 @@ import json
 
 class Parser():
     def __init__(self, config_file: str) -> None:
+        print(f"Reading file: {config_file}")
         self.config_data = self.get_config_data(config_file)
         self.parse_main_args()
         self.parse_level_args()
@@ -50,7 +51,6 @@ class Parser():
         defaults = {
             "highscore_filename": "highscore.json",
             "lives": 3,
-            "pacgum": 42,
             "points_per_pacgum": 10,
             "points_per_super_pacgum": 50,
             "points_per_ghost": 200,
@@ -97,13 +97,14 @@ class Parser():
                     level[key]
                 except KeyError:
                     print(
-                        f"level {i + 1}: {key} not specified, ",
+                        f"level {i + 1}: {key} not specified,",
                         f"resulting to default value: {default}"
                     )
                 parsed_level[key] = level.get(key, default)
             self.levels.append(parsed_level)
 
     def create_config(self) -> Config:
+        print("Configurations set")
         return Config(
             highscore_filename=self.highscore_filename,
             lives=self.lives,

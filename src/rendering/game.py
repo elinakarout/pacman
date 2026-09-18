@@ -3,13 +3,15 @@ import pygame
 from .main_menu import MainMenu
 from .level import Level
 from .highscore import Highscore
+from src.config import Config
 
 SURFACES = Dict[str, pygame.Surface]
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, configs:  Config):
         self.surfaces: SURFACES = {}
+        self.configs = configs
 
     def add_surface(self, name: str, surface: pygame.Surface):
         self.surfaces[name] = surface
@@ -24,9 +26,9 @@ class Game:
         window = pygame.display.set_mode(flags=pygame.FULLSCREEN)
         pygame.display.set_caption("Pac-Man")
         self.add_surface("main", MainMenu(window.get_size()))
-        self.add_surface("start", Level((20, 20), window.get_size()))
+        self.add_surface("start", Level(self.configs, window.get_size()))
         self.add_surface("highscore", Highscore("src/Rendering/highscore.json", window.get_size()))
-        self.add_surface("instructions", Instructions(window.get_size()))
+        # self.add_surface("instructions", Instructions(window.get_size()))
         current = "main"
         run = True
         while run:

@@ -1,15 +1,20 @@
 from typing import Tuple
 import pygame
 from mazegenerator import MazeGenerator
+from src.config import Config
 
 
 class Level(pygame.Surface):
     def __init__(
-        self, m_size: Tuple[int, int], *args: int, **kwargs: str
+        self, configs: Config, *args: int, **kwargs: str
     ) -> None:
         self.CELL_SIZE = 50
-        self.maze_size = m_size
-        self.maze = MazeGenerator(m_size).maze
+        self.levels = configs.levels
+        self.current_level = 1
+        self.current_width = self.levels[self.current_level - 1].width
+        self.current_height = self.levels[self.current_level - 1].height
+        self.maze_size = (self.current_width, self.current_height)
+        self.maze = MazeGenerator(self.maze_size).maze
         self.WALL_COLOR = (255, 255, 255)
         super().__init__(*args, **kwargs)
 
