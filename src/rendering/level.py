@@ -4,15 +4,16 @@ from mazegenerator import MazeGenerator
 
 
 class Level(pygame.Surface):
-    def __init__(self, m_size: Tuple[int, int],
-                 *args, **kwargs) -> None:
+    def __init__(
+        self, m_size: Tuple[int, int], *args: int, **kwargs: str
+    ) -> None:
         self.CELL_SIZE = 50
         self.maze_size = m_size
         self.maze = MazeGenerator(m_size).maze
         self.WALL_COLOR = (255, 255, 255)
         super().__init__(*args, **kwargs)
 
-    def get_center(self, width, height) -> Tuple[int, int]:
+    def get_center(self, width: int, height: int) -> Tuple[int, int]:
         s_width, s_height = self.get_size()
         m_width = width * self.CELL_SIZE
         m_height = height * self.CELL_SIZE
@@ -20,11 +21,10 @@ class Level(pygame.Surface):
                   (s_height - m_height) // 2)
         return center
 
-    def draw_wall_at(self, start, end) -> None:
-        pygame.draw.line(self, (255, 255, 255),
-                                         start,
-                                         end,
-                                         1)
+    def draw_wall_at(self, start: int, end: int) -> None:
+        pygame.draw.line(
+            self, (255, 255, 255), start, end, 1
+        )
 
     def setup(self) -> None:
         self.fill((0, 0, 0))
@@ -41,12 +41,15 @@ class Level(pygame.Surface):
                                       (x + self.CELL_SIZE,
                                        y + self.CELL_SIZE))
                 if cell & 4:
-                    self.draw_wall_at((x, y + self.CELL_SIZE),
-                                     (x + self.CELL_SIZE,
-                                      y + self.CELL_SIZE))
+                    self.draw_wall_at(
+                        (x, y + self.CELL_SIZE),
+                        (x + self.CELL_SIZE, y + self.CELL_SIZE)
+                    )
                 if cell & 8:
-                    self.draw_wall_at((x, y),
-                                     (x, y + self.CELL_SIZE))
+                    self.draw_wall_at(
+                        (x, y),
+                        (x, y + self.CELL_SIZE)
+                    )
 
     def start(self, window: pygame.Surface) -> str:
         self.setup()
@@ -63,4 +66,4 @@ class Level(pygame.Surface):
                         return "main"
             window.blit(self, (0, 0))
             pygame.display.update()
-        return ""
+        return "exit"
