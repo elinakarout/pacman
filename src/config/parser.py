@@ -3,6 +3,12 @@ import json
 
 
 class Parser():
+    highscore_filename: str
+    lives: int
+    points_per_pacgum: int
+    points_per_super_pacgum: int
+    points_per_ghost: int
+
     def __init__(self, config_file: str) -> None:
         print(f"Reading file: {config_file}")
         self.config_data = self.get_config_data(config_file)
