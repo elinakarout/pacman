@@ -18,6 +18,9 @@ class Level(pygame.Surface):
         self.maze = MazeGenerator(self.maze_size).maze
         self.WALL_COLOR = (255, 255, 255)
         self.lives = configs.lives
+        self.points_per_pacgum = configs.points_per_pacgum
+        self.points_per_super_pacgum = configs.points_per_super_pacgum
+        self.font = pygame.font.Font(None, 40)
         super().__init__(size)
 
     def get_center(self, width: int, height: int) -> Tuple[int, int]:
@@ -34,6 +37,29 @@ class Level(pygame.Surface):
         pygame.draw.line(
             self, (255, 255, 255), start, end, 1
         )
+
+    def draw_pacgums(self) -> None:
+        half = self.CELL_SIZE // 2
+        for row, col in self.pacgums:
+            x = self.center[0] + col * self.CELL_SIZE + half
+            y = self.center[1] + row * self.CELL_SIZE + half
+            pygame.draw.circle(self, (255, 200, 150), (x, y), 4)
+        for row, col in self.super_pacgums:
+            x = self.center[0] + col * self.CELL_SIZE + half
+            y = self.center[1] + row * self.CELL_SIZE + half
+            pygame.draw.circle(self, (255, 200, 150), (x, y), 8)
+
+    def draw_score(self) -> None:
+        margin = 20
+        width = self.get_width()
+        score = self.font.render(
+            f"SCORE: {self.player.score}", True, (255, 255, 255)
+        )
+        self.blit(score, (width - score.get_width() - margin, margin))
+        lives = self.font.render(
+            f"LIVES: {self.player.lives}", True, (255, 255, 255)
+        )
+        self.blit(lives, (margin, margin))
 
     def setup(self) -> None:
         self.fill((0, 0, 0))
@@ -60,8 +86,24 @@ class Level(pygame.Surface):
                         (x, y),
                         (x, y + self.CELL_SIZE)
                     )
-        self.maze_surface = self.copy()      # walls only, reused each frame
+        self.maze_surface = self.copy()
         self.player = Player(self.maze, self.lives, self.CELL_SIZE)
+        self.pacgums: set[tuple[int, int]] = {
+            (row, col)
+            for row, maze_row in enumerate(self.maze)
+            for col, cell in enumerate(maze_row)
+            if cell != 15
+        }
+        self.pacgums.remove(self.player.get_start(self.maze))
+        rows, cols = len(self.maze), len(self.maze[0])
+        self.super_pacgums = {
+            (0, 0),
+            (0, cols - 1),
+            (rows - 1, 0),
+            (rows - 1, cols - 1)
+        }
+        for super_pacgum in self.super_pacgums:
+            self.pacgums.remove(super_pacgum)
 
     def start(self, window: pygame.Surface) -> str:
         self.setup()
@@ -80,8 +122,17 @@ class Level(pygame.Surface):
                         return "main"
                     else:
                         self.player.handle_key(e.key)
+            pos = (self.player.row, self.player.col)
+            if pos in self.pacgums:
+                self.pacgums.remove(pos)
+                self.player.score += self.points_per_pacgum
+            if pos in self.super_pacgums:
+                self.super_pacgums.remove(pos)
+                self.player.score += self.points_per_super_pacgum
             self.player.update(dt)
-            self.blit(self.maze_surface, (0, 0))          # erase old frame
+            self.blit(self.maze_surface, (0, 0))
+            self.draw_pacgums()
+            self.draw_score()
             self.player.draw(self, self.center, self.CELL_SIZE)
             window.blit(self, (0, 0))
             pygame.display.update()

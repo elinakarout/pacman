@@ -39,6 +39,5 @@ class Game:
         while run:
             if current == "exit":
                 run = False
-            print(f"Currently on: {current}")
             current = self.play_scene(window, current)
         pygame.quit()
