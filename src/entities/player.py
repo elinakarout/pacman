@@ -1,5 +1,5 @@
 import pygame
-
+from typing import Union
 
 # (row, col, wall bit)
 DIRECTIONS = {
@@ -32,14 +32,13 @@ class Player:
         self.lives = lives
         self.score = 0
         self.speed = speed
-        self.direction = None
-        self.next_direction = None
+        self.direction: Union[str, None] = None
+        self.next_direction: Union[str, None] = None
 
     @staticmethod
     def get_start(maze: list[list[int]]) -> tuple[int, int]:
         y = len(maze) // 2
         x = len(maze[0]) // 2
-        print(y)
         while maze[y][x] == 15:
             x += 1
         return (x, y)
@@ -56,7 +55,7 @@ class Player:
             pygame.K_RIGHT: "right", pygame.K_d: "right"
         }
         if key in keys:
-            self.move(keys[key])
+            self.next_direction = keys[key]
 
     def move(self, direction: str) -> None:
         self.facing = direction
@@ -66,7 +65,19 @@ class Player:
             self.col += d_col
 
     def update(self, dt: float) -> None:
-        pass
+        self.timer += dt
+        if self.timer < 1 / self.speed:
+            return
+        self.timer = 0
+        if self.next_direction and self.can_move(self.next_direction):
+            self.direction = self.next_direction
+        if self.direction and self.can_move(self.direction):
+            d_row, d_col, _ = DIRECTIONS[self.direction]
+            self.row += d_row
+            self.col += d_col
+            self.facing = self.direction
+        else:
+            self.direction = None
 
     def draw(self, surface: pygame.Surface, origin: tuple[int, int],
              cell_size: int) -> None:
