@@ -1,20 +1,18 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 import pygame
 from .button import Button
 
-BUTTTONS = Dict[str, Button] | None
-
 
 class MainMenu(pygame.Surface):
-    def __init__(self, *args: int, **kwargs: str) -> None:
-        self.buttons: BUTTTONS = {}
+    def __init__(self, size: Tuple[int, int]) -> None:
+        self.buttons: Dict[str, Button] = {}
         self.states = [
             "start",
             "highscore",
             "instructions",
             "exit"
         ]
-        super().__init__(*args, **kwargs)
+        super().__init__(size)
 
     def buttons_init(self, width: int, height: int) -> List[Button]:
         OFFSET = 100
@@ -27,7 +25,7 @@ class MainMenu(pygame.Surface):
             btn = Button(
                 name=n,
                 x=button_x,
-                y=button_y + (OFFSET * (i * 1.25)),
+                y=int(button_y + (OFFSET * (i * 1.25))),
                 size=BUTTON_SIZE,
                 text=n.capitalize(),
                 font=FONT[0],
@@ -36,7 +34,7 @@ class MainMenu(pygame.Surface):
             res.append(btn)
         return res
 
-    def setup(self):
+    def setup(self) -> None:
         self.fill((0, 0, 0))
         font = pygame.font.SysFont("arial", 150)
         font_s = font.render("Pac-Man", True,
@@ -51,7 +49,7 @@ class MainMenu(pygame.Surface):
             self.buttons[b.name] = b
         self.blit(font_s, (title_w, title_h))
 
-    def check_button_clicked(self):
+    def check_button_clicked(self) -> Optional[Button]:
         buttons = [b for b in self.buttons.values() if b.check_click()]
         return buttons[0] if buttons else None
 
@@ -64,7 +62,7 @@ class MainMenu(pygame.Surface):
             events = pygame.event.get()
             for e in events:
                 if e.type == pygame.QUIT:
-                    return False
+                    return "exit"
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_RETURN:
                         return "start"

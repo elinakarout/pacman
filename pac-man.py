@@ -1,7 +1,7 @@
 import sys
 from src.config import Parser
 from src.rendering import Game
-from pydantic import ValidationError
+# from pydantic import ValidationError
 # from pprint import pprint
 
 
