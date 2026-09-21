@@ -1,9 +1,10 @@
 from typing import Dict, List, Optional, Tuple
 import pygame
+from .custom_surface import CustomSurface
 from .button import Button
 
 
-class MainMenu(pygame.Surface):
+class MainMenu(CustomSurface):
     def __init__(self, size: Tuple[int, int]) -> None:
         self.buttons: Dict[str, Button] = {}
         self.states = [
@@ -16,7 +17,7 @@ class MainMenu(pygame.Surface):
 
     def buttons_init(self, width: int, height: int) -> List[Button]:
         OFFSET = 100
-        FONT = ("arial", 50)
+        FONT = (self.font_path, 50)
         BUTTON_SIZE = (300, 100)
         button_x = (width - BUTTON_SIZE[0]) // 2
         button_y = (height - BUTTON_SIZE[1]) // 2
@@ -34,10 +35,10 @@ class MainMenu(pygame.Surface):
             res.append(btn)
         return res
 
-    def setup(self) -> None:
-        self.fill((0, 0, 0))
-        font = pygame.font.SysFont("arial", 150)
-        font_s = font.render("Pac-Man", True,
+    def setup(self, window: pygame.Surface) -> None:
+        super().setup(window)
+        font = pygame.font.Font(self.font_path, 150)
+        font_s = font.render("Pac-Craft", True,
                              pygame.Color("yellow"))
         w, h = self.get_size()
         f_w, f_h = font_s.get_size()
@@ -54,7 +55,7 @@ class MainMenu(pygame.Surface):
         return buttons[0] if buttons else None
 
     def start(self, window: pygame.Surface) -> str:
-        self.setup()
+        self.setup(window)
         run = True
         for b in self.buttons.values():
             b.draw(self)

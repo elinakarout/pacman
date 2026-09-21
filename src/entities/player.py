@@ -21,7 +21,7 @@ class Player:
         self.timer = 0.0
         self.facing = "right"
         size = cell_size - 8
-        base = pygame.image.load("assets/pacman.png").convert_alpha()
+        base = pygame.image.load("/sgoinfre/kchami/pacman/pacraft_assets/Steve_front.png").convert_alpha()
         base_image = pygame.transform.smoothscale(base, (size, size))
         self.images = {
             name: pygame.transform.rotate(base_image, angle)

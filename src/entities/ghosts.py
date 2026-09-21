@@ -189,7 +189,7 @@ class Ghosts:
             start_delay=3,
             col=1,
             row=0,
-            asset=("assets/blinky.png"),
+            asset=("/sgoinfre/kchami/pacman/pacraft_assets/Enderman_front.png"),
             speed=self.speed,
             state="wait"
         ))
@@ -200,7 +200,7 @@ class Ghosts:
             start_delay=6,
             col=1,
             row=rows - 1,
-            asset=("assets/pinky.png"),
+            asset=("/sgoinfre/kchami/pacman/pacraft_assets/Skeletion.png"),
             speed=self.speed,
             state="wait"
         ))
@@ -211,7 +211,7 @@ class Ghosts:
             start_delay=9,
             col=cols - 2,
             row=rows - 1,
-            asset=("assets/inky.png"),
+            asset=("/sgoinfre/kchami/pacman/pacraft_assets/Zombie_front.png"),
             speed=self.speed,
             state="wait"
         ))
@@ -222,7 +222,7 @@ class Ghosts:
             start_delay=12,
             col=cols - 2,
             row=0,
-            asset=("assets/clyde.png"),
+            asset=("/sgoinfre/kchami/pacman/pacraft_assets/Spider_front.png"),
             speed=self.speed,
             state="wait"
         ))
