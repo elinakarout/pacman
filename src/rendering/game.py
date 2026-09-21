@@ -1,5 +1,6 @@
-from typing import Dict
 import pygame
+from typing import Dict
+from .instructions import Instructions
 from .main_menu import MainMenu
 from .level import Level
 from .highscore import Highscore
@@ -33,7 +34,7 @@ class Game:
             "src/Rendering/highscore.json",
             window.get_size())
         )
-        # self.add_surface("instructions", Instructions(window.get_size()))
+        self.add_surface("instructions", Instructions(window.get_size()))
         current = "main"
         run = True
         while run:
