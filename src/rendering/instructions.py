@@ -1,7 +1,9 @@
 import pygame
 
+from .custom_surface import CustomSurface
 
-class Instructions(pygame.Surface):
+
+class Instructions(CustomSurface):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.instructions = [
@@ -19,7 +21,7 @@ class Instructions(pygame.Surface):
         for i, ins in enumerate(self.instructions):
             ins_x = (w - ins_size[0]) // 2.5
             ins_y = (h - ins_size[1]) // 5 * (i+2) * 0.50
-            font = pygame.font.SysFont("arial", 32)
+            font = pygame.font.Font(self.font_path, 32)
             font_s = font.render(f"{i+1}. {ins}", True,
                                  pygame.Color("white"))
             self.blit(font_s, (ins_x, ins_y))

@@ -1,15 +1,20 @@
+import math
 from typing import Tuple
 import pygame
 from mazegenerator import MazeGenerator
 from src.config import Config
 from src.entities import Player, Ghosts
+from .custom_surface import CustomSurface
 
 
-class Level(pygame.Surface):
+class Level(CustomSurface):
     def __init__(
         self, configs: Config, size: Tuple[int, int]
     ) -> None:
+        super().__init__(size)
         self.CELL_SIZE = 50
+        self.forbidden = pygame.image.load(
+            f"{self.sprites_dir}/water_block.png")
         self.current_level = 1
         self.width = configs.width
         self.height = configs.height
@@ -20,8 +25,7 @@ class Level(pygame.Surface):
         self.points_per_pacgum = configs.points_per_pacgum
         self.points_per_super_pacgum = configs.points_per_super_pacgum
         self.points_per_ghost = configs.points_per_ghost
-        self.font = pygame.font.Font(None, 40)
-        super().__init__(size)
+        self.font = pygame.font.Font(self.font_path, 40)
 
     def get_center(self, width: int, height: int) -> Tuple[int, int]:
         s_width, s_height = self.get_size()
@@ -34,20 +38,45 @@ class Level(pygame.Surface):
     def draw_wall_at(
         self, start: Tuple[int, int], end: Tuple[int, int]
     ) -> None:
-        pygame.draw.line(
-            self, (255, 255, 255), start, end, 1
-        )
+        x1, y1 = start
+        x2, y2 = end
+        double = False
+        if abs(x2 - x1) > abs(y2 - y1):
+            wall = pygame.image.load("/sgoinfre/kchami/pacman/pacraft_assets/wall_north_south.png").convert_alpha()
+            wall 
+        else:
+            double = True
+            wall = pygame.image.load("/sgoinfre/kchami/pacman/pacraft_assets/wall_top.png").convert_alpha()
+        dx = x2 - x1
+        dy = y2 - y1
+        l = int(math.hypot(dx, dy))
+        if not l:
+            l = 1
+        wall_thickness = wall.get_height()
+        if double:
+            wall_thickness *= 2
+        scaled = pygame.transform.scale(wall, (l, wall_thickness))
+        mid_x = (x1 + x2) / 2
+        mid_y = (y1 + y2) / 2
+        rect = scaled.get_rect(center=(mid_x, mid_y))
+        self.blit(scaled, rect.topleft)
 
     def draw_pacgums(self) -> None:
-        half = self.CELL_SIZE // 2
+        gum = pygame.image.load("pacraft_assets/Emerald.png").convert_alpha()
+        half = self.CELL_SIZE // 6
+        s = gum.get_size()
+        scale = 0.7
+        new_s = (scale * s[0], scale * s[1])
+        gum = pygame.transform.scale(gum, new_s)
         for row, col in self.pacgums:
-            x = self.center[0] + col * self.CELL_SIZE + half
-            y = self.center[1] + row * self.CELL_SIZE + half
-            pygame.draw.circle(self, (255, 200, 150), (x, y), 4)
+            x = self.center[0] + col * self.CELL_SIZE + (half * 1.5)
+            y = self.center[1] + row * self.CELL_SIZE + (half * 1.5)
+            self.blit(gum, (x, y))
+        sword = pygame.image.load("pacraft_assets/nether_sword.png").convert_alpha()
         for row, col in self.super_pacgums:
             x = self.center[0] + col * self.CELL_SIZE + half
             y = self.center[1] + row * self.CELL_SIZE + half
-            pygame.draw.circle(self, (255, 200, 150), (x, y), 8)
+            self.blit(sword, (x, y))
 
     def draw_score(self) -> None:
         margin = 20
@@ -75,8 +104,9 @@ class Level(pygame.Surface):
     def level_passed(self) -> bool:
         return not self.pacgums and not self.super_pacgums
 
-    def setup(self) -> None:
+    def setup(self, window) -> None:
         self.fill((0, 0, 0))
+        super().setup(window)
         center = self.get_center(self.maze_size[0],
                                  self.maze_size[1])
         self.center = center
@@ -100,6 +130,8 @@ class Level(pygame.Surface):
                         (x, y),
                         (x, y + self.CELL_SIZE)
                     )
+                if cell == 15:
+                    self.blit(self.forbidden, (x + 10, y + 10))
         self.maze_surface = self.copy()
         self.player = Player(self.maze, self.lives, self.CELL_SIZE)
         self.ghosts = Ghosts(self.maze, self.CELL_SIZE)
@@ -122,7 +154,7 @@ class Level(pygame.Surface):
         self.total_pacgums = len(self.pacgums)
 
     def start(self, window: pygame.Surface) -> str:
-        self.setup()
+        self.setup(window)
         clock = pygame.time.Clock()
         run = True
         while run:

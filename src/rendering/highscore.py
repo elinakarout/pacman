@@ -2,9 +2,10 @@ from typing import Any, Dict, List, Tuple
 import pygame
 import json
 import os
+from .custom_surface import CustomSurface
 
 
-class Highscore(pygame.Surface):
+class Highscore(CustomSurface):
     def __init__(self, file_path: str, size: Tuple[int, int]) -> None:
         self.scores: List[Dict[str, Any]] = []
         if os.path.exists(file_path):
@@ -16,7 +17,7 @@ class Highscore(pygame.Surface):
         super().__init__(size)
 
     def print_empty(self) -> None:
-        font = pygame.font.SysFont("arial", 32)
+        font = pygame.font.Font(self.font_path, 32)
         font_s = font.render("No highscores :(", True, pygame.Color("white"))
         w, h = self.get_size()
         f_w, f_h = font_s.get_size()
@@ -30,7 +31,7 @@ class Highscore(pygame.Surface):
             print(self.scores)
             self.print_empty()
             return
-        font = pygame.font.SysFont("arial", 32)
+        font = pygame.font.Font(self.font_path, 32)
         for i, score in enumerate(self.scores):
             font_s = font.render(f"{i+1}. {score['name']}-{score['score']}",
                                  True, pygame.Color("White"))

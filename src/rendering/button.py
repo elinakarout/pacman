@@ -14,7 +14,7 @@ class Button:
                                 y,
                                 size[0],
                                 size[1])
-        self.font = pygame.font.SysFont(font, font_s)
+        self.font = pygame.font.Font(font, font_s)
         self.clicked = False
 
     def draw(self, surface: pygame.Surface) -> None:
