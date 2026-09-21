@@ -2,7 +2,7 @@ from typing import Tuple
 import pygame
 from mazegenerator import MazeGenerator
 from src.config import Config
-from src.entities import Player
+from src.entities import Player, Ghosts
 
 
 class Level(pygame.Surface):
@@ -10,16 +10,16 @@ class Level(pygame.Surface):
         self, configs: Config, size: Tuple[int, int]
     ) -> None:
         self.CELL_SIZE = 50
-        self.levels = configs.levels
         self.current_level = 1
-        self.current_width = self.levels[self.current_level - 1].width
-        self.current_height = self.levels[self.current_level - 1].height
-        self.maze_size = (self.current_width, self.current_height)
-        self.maze = MazeGenerator(self.maze_size).maze
+        self.width = configs.width
+        self.height = configs.height
+        self.maze_size = (self.width, self.height)
+        self.maze = MazeGenerator(size=self.maze_size, seed=configs.seed).maze
         self.WALL_COLOR = (255, 255, 255)
         self.lives = configs.lives
         self.points_per_pacgum = configs.points_per_pacgum
         self.points_per_super_pacgum = configs.points_per_super_pacgum
+        self.points_per_ghost = configs.points_per_ghost
         self.font = pygame.font.Font(None, 40)
         super().__init__(size)
 
@@ -61,6 +61,20 @@ class Level(pygame.Surface):
         )
         self.blit(lives, (margin, margin))
 
+    def life_lost(self) -> None:
+        self.player.row, self.player.col = self.player.get_start(self.maze)
+        for ghost in self.ghosts.ghosts:
+            ghost.reset(self.ghosts.speed)
+
+    def eat_super_pacgum(self, pos: tuple[int, int]) -> None:
+        self.super_pacgums.remove(pos)
+        self.player.score += self.points_per_super_pacgum
+        for ghost in self.ghosts.ghosts:
+            ghost.make_edible()
+
+    def level_passed(self) -> bool:
+        return not self.pacgums and not self.super_pacgums
+
     def setup(self) -> None:
         self.fill((0, 0, 0))
         center = self.get_center(self.maze_size[0],
@@ -88,6 +102,7 @@ class Level(pygame.Surface):
                     )
         self.maze_surface = self.copy()
         self.player = Player(self.maze, self.lives, self.CELL_SIZE)
+        self.ghosts = Ghosts(self.maze, self.CELL_SIZE)
         self.pacgums: set[tuple[int, int]] = {
             (row, col)
             for row, maze_row in enumerate(self.maze)
@@ -104,6 +119,7 @@ class Level(pygame.Surface):
         }
         for super_pacgum in self.super_pacgums:
             self.pacgums.remove(super_pacgum)
+        self.total_pacgums = len(self.pacgums)
 
     def start(self, window: pygame.Surface) -> str:
         self.setup()
@@ -127,13 +143,29 @@ class Level(pygame.Surface):
                 self.pacgums.remove(pos)
                 self.player.score += self.points_per_pacgum
             if pos in self.super_pacgums:
-                self.super_pacgums.remove(pos)
-                self.player.score += self.points_per_super_pacgum
+                self.eat_super_pacgum(pos)
+            killed, ate = self.ghosts.collide(pos)
+            if ate:
+                self.player.score += self.points_per_ghost
+            if killed:
+                self.player.lives -= 1
+                if self.player.lives != 0:
+                    self.life_lost()
+                else:
+                    return "game_over"
+            if self.level_passed():
+                return "level_passed"
             self.player.update(dt)
+            self.ghosts.update(
+                dt, (self.player.col, self.player.row),
+                self.player.facing,
+                len(self.pacgums) / self.total_pacgums
+            )
             self.blit(self.maze_surface, (0, 0))
             self.draw_pacgums()
             self.draw_score()
             self.player.draw(self, self.center, self.CELL_SIZE)
+            self.ghosts.draw(self, self.center)
             window.blit(self, (0, 0))
             pygame.display.update()
         return "exit"

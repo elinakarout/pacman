@@ -41,7 +41,7 @@ class Player:
         x = len(maze[0]) // 2
         while maze[y][x] == 15:
             x += 1
-        return (x, y)
+        return (y, x)
 
     def can_move(self, direction: str) -> bool:
         _, _, bit = DIRECTIONS[direction]

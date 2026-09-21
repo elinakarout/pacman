@@ -8,12 +8,15 @@ class Parser():
     points_per_pacgum: int
     points_per_super_pacgum: int
     points_per_ghost: int
+    width: int
+    height: int
+    seed: int
 
     def __init__(self, config_file: str) -> None:
         print(f"Reading file: {config_file}")
         self.config_data = self.get_config_data(config_file)
-        self.parse_main_args()
-        self.parse_level_args()
+        self.parse_args()
+        # self.parse_level_args()
         self.data = self.create_config()
 
     @staticmethod
@@ -52,7 +55,7 @@ class Parser():
             level_max_time -= 10
         return levels
 
-    def parse_main_args(self) -> None:
+    def parse_args(self) -> None:
         config_data = self.config_data
         defaults = {
             "highscore_filename": "highscore.json",
@@ -60,6 +63,9 @@ class Parser():
             "points_per_pacgum": 10,
             "points_per_super_pacgum": 50,
             "points_per_ghost": 200,
+            "width": 21,
+            "height": 21,
+            "seed": 42
         }
         for key, default in defaults.items():
             try:
@@ -71,44 +77,6 @@ class Parser():
                 )
             setattr(self, key, config_data.get(key, default))
 
-    def parse_level_args(self) -> None:
-        level_defaults = {
-            "width": 21,
-            "height": 21,
-            "seed": None,
-            "level_max_time": 90,
-        }
-        config_data = self.config_data
-        try:
-            if not config_data["levels"]:
-                print("levels empty, resulting to default levels")
-        except KeyError:
-            print("levels not specified, resulting to default levels")
-        levels_data = config_data.get("levels") or self.default_levels()
-        if not isinstance(levels_data, list):
-            raise ValueError(
-                f"Error: 'levels' must be a list, got "
-                f"{type(levels_data).__name__}"
-            )
-        self.levels = []
-        for i, level in enumerate(levels_data):
-            if not isinstance(level, dict):
-                raise ValueError(
-                    f"Error: level {i + 1} must be an "
-                    f"object, got {type(level).__name__}"
-                )
-            parsed_level = {}
-            for key, default in level_defaults.items():
-                try:
-                    level[key]
-                except KeyError:
-                    print(
-                        f"level {i + 1}: {key} not specified,",
-                        f"resulting to default value: {default}"
-                    )
-                parsed_level[key] = level.get(key, default)
-            self.levels.append(parsed_level)
-
     def create_config(self) -> Config:
         print("Configurations set")
         return Config(
@@ -117,5 +85,7 @@ class Parser():
             points_per_pacgum=self.points_per_pacgum,
             points_per_super_pacgum=self.points_per_super_pacgum,
             points_per_ghost=self.points_per_ghost,
-            levels=self.levels
+            width=self.width,
+            height=self.height,
+            seed=self.seed
         )
