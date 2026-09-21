@@ -42,9 +42,8 @@ class Ghost:
         surface.blit(img, (x, y))
 
     def make_edible(self) -> None:
-        if self.state in ("chase", "edible"):
-            self.state = "edible"
-            self.edible_time = 0.0
+        self.state = "edible"
+        self.edible_time = 0.0
 
     def reset(self, speed: float) -> None:
         self.col = self.home_col
@@ -264,6 +263,6 @@ class Ghosts:
             if ghost.state == "edible":
                 ghost.reset(self.speed)
                 ate = True
-            elif ghost.state != "eaten":
+            elif ghost.state == "chase":
                 killed = True
         return killed, ate
