@@ -144,7 +144,8 @@ class Ghost:
         if self.state == "wait":
             self.wait_time += dt
             if self.wait_time >= self.start_delay:
-                self.state = "chase"
+                if not CHEATS["ghost_freeze"]:
+                    self.state = "chase"
             return
         if self.state == "eaten":
             return
@@ -188,7 +189,7 @@ class Ghosts:
             name="BLINKY",
             home_col=1,
             home_row=0,
-            start_delay=3,
+            start_delay=2,
             col=1,
             row=0,
             asset=("pacraft_assets/Enderman_front.png"),
@@ -199,7 +200,7 @@ class Ghosts:
             name="PINKY",
             home_col=1,
             home_row=rows - 1,
-            start_delay=6,
+            start_delay=4,
             col=1,
             row=rows - 1,
             asset=("pacraft_assets/Skeletion.png"),
@@ -210,7 +211,7 @@ class Ghosts:
             name="INKY",
             home_col=cols - 2,
             home_row=rows - 1,
-            start_delay=9,
+            start_delay=6,
             col=cols - 2,
             row=rows - 1,
             asset=("pacraft_assets/Zombie_front.png"),
@@ -221,7 +222,7 @@ class Ghosts:
             name="CLYDE",
             home_col=cols - 2,
             home_row=0,
-            start_delay=12,
+            start_delay=8,
             col=cols - 2,
             row=0,
             asset=("pacraft_assets/Spider_front.png"),
@@ -277,7 +278,7 @@ class Ghosts:
             if self.maze[row][col] != 15:
                 return row, col
 
-    def add_ghost(self) -> Ghost:
+    def add_ghost(self) -> None:
         template = random.choice(self.ghosts)
         home_row, home_col = self.random_open_cell()
         ghost = Ghost(
@@ -299,6 +300,14 @@ class Ghosts:
             for name, angle in ANGLES.items()
         }
         self.ghosts.append(ghost)
+
+    def freeze(self) -> None:
+        for ghost in self.ghosts:
+            ghost.state = "wait"
+
+    def unfreeze(self) -> None:
+        for ghost in self.ghosts:
+            ghost.state = "chase"
 
     def collide(self, position: tuple[int, int]) -> tuple[bool, bool]:
         row, col = position
