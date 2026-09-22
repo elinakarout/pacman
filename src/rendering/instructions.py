@@ -14,8 +14,9 @@ class Instructions(CustomSurface):
             "Have fun!"
         ]
 
-    def setup(self) -> None:
+    def setup(self, window: pygame.Surface) -> None:
         self.fill((0, 0, 0))
+        self.draw_background(window)
         ins_size = (100, 100)
         w, h = self.get_size()
         for i, ins in enumerate(self.instructions):
@@ -27,7 +28,7 @@ class Instructions(CustomSurface):
             self.blit(font_s, (ins_x, ins_y))
 
     def start(self, window: pygame.Surface):
-        self.setup()
+        self.setup(window)
         run = True
         while run:
             events = pygame.event.get()
