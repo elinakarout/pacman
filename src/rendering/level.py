@@ -17,7 +17,7 @@ class Level(CustomSurface):
         self.forbidden = pygame.image.load(
             f"{self.sprites_dir}/water_block.png")
         self.current_level = 1
-        self.timer = 5
+        self.timer = 100
         self.paused = False
         self.width = configs.width
         self.height = configs.height
@@ -83,7 +83,10 @@ class Level(CustomSurface):
 
     def draw_level_and_timer(self):
         message = f"Level-{self.current_level} Time: {self.timer}"
-        mes_rect = self.font.render(message, True, (255, 255, 255))
+        if self.timer <= 10:
+            mes_rect = self.font.render(message, True, (252, 3, 3))
+        else:
+            mes_rect = self.font.render(message, True, (255, 255, 255))
         w = self.get_width()
         size = ((w - mes_rect.get_width()) // 2, 20)
         self.blit(mes_rect, size)
@@ -127,7 +130,6 @@ class Level(CustomSurface):
 
     def setup(self, window) -> None:
         self.fill((0, 0, 0))
-        self.timer = 100
         self.paused = False
         super().setup(window)
         center = self.get_center(self.maze_size[0],
@@ -185,6 +187,12 @@ class Level(CustomSurface):
         while run:
             self.check_cheats()
             if not self.timer:
+                all_cells = self.width * self.height
+                for i in range(all_cells):
+                    self.ghosts.add_ghost()
+                    self.ghosts.draw(self, self.center)
+                    window.blit(self, (0, 0))
+                    pygame.display.update() 
                 return "loser:" + str(self.player.score)
             dt = clock.tick(60) / 1000
             events = pygame.event.get()

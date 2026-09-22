@@ -10,7 +10,7 @@ DIRECTIONS = {
 }
 
 
-ANGLES = {"right": 0, "up": 90, "left": 180, "down": 270}
+ANGLES = {"down": 0, "right": 90, "up": 180, "left": 270}
 
 
 class Player:
