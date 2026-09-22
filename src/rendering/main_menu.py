@@ -18,7 +18,7 @@ class MainMenu(CustomSurface):
     def buttons_init(self, width: int, height: int) -> List[Button]:
         OFFSET = 100
         FONT = (self.font_path, 50)
-        BUTTON_SIZE = (300, 100)
+        BUTTON_SIZE = (350, 100)
         button_x = (width - BUTTON_SIZE[0]) // 2
         button_y = (height - BUTTON_SIZE[1]) // 2
         res = []

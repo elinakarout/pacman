@@ -16,6 +16,8 @@ class Level(CustomSurface):
         self.forbidden = pygame.image.load(
             f"{self.sprites_dir}/water_block.png")
         self.current_level = 1
+        self.timer = 5
+        self.paused = False
         self.width = configs.width
         self.height = configs.height
         self.maze_size = (self.width, self.height)
@@ -78,6 +80,13 @@ class Level(CustomSurface):
             y = self.center[1] + row * self.CELL_SIZE + half
             self.blit(sword, (x, y))
 
+    def draw_level_and_timer(self):
+        message = f"Level-{self.current_level} Time: {self.timer}"
+        mes_rect = self.font.render(message, True, (255, 255, 255))
+        w = self.get_width()
+        size = ((w - mes_rect.get_width()) // 2, 20)
+        self.blit(mes_rect, size)
+
     def draw_score(self) -> None:
         margin = 20
         width = self.get_width()
@@ -106,6 +115,8 @@ class Level(CustomSurface):
 
     def setup(self, window) -> None:
         self.fill((0, 0, 0))
+        self.timer = 100
+        self.paused = False
         super().setup(window)
         center = self.get_center(self.maze_size[0],
                                  self.maze_size[1])
@@ -155,21 +166,32 @@ class Level(CustomSurface):
 
     def start(self, window: pygame.Surface) -> str:
         self.setup(window)
+        TIMER = pygame.USEREVENT + 1
+        pygame.time.set_timer(TIMER, 1000)
         clock = pygame.time.Clock()
         run = True
         while run:
+            if not self.timer:
+                return "loser:" + str(self.player.score)
             dt = clock.tick(60) / 1000
             events = pygame.event.get()
             for e in events:
                 if e.type == pygame.QUIT:
                     run = False
-                if e.type == pygame.KEYDOWN:
+                elif e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        run = False
-                    elif e.key == pygame.K_RETURN:
                         return "main"
+                    elif e.key == pygame.K_RETURN:
+                        run = False
+                    elif e.key == pygame.K_p:
+                        self.paused = not self.paused
                     else:
                         self.player.handle_key(e.key)
+                elif e.type == TIMER and not self.paused:
+                    self.timer -= 1
+            if self.paused:
+                dt = 0
+                continue
             pos = (self.player.row, self.player.col)
             if pos in self.pacgums:
                 self.pacgums.remove(pos)
@@ -186,7 +208,14 @@ class Level(CustomSurface):
                 else:
                     return "loser:" + str(self.player.score)
             if self.level_passed():
-                return "winner:" + str(self.player.score)
+                if self.current_level == 10:
+                    return "winner:" + str(self.player.score)
+                self.current_level += 1
+                self.timer -= 5
+                self.maze = MazeGenerator((self.width,
+                                          self.height)).maze
+                self.setup(window)
+                continue
             self.player.update(dt)
             self.ghosts.update(
                 dt, (self.player.col, self.player.row),
@@ -195,6 +224,7 @@ class Level(CustomSurface):
             )
             self.blit(self.maze_surface, (0, 0))
             self.draw_pacgums()
+            self.draw_level_and_timer()
             self.draw_score()
             self.player.draw(self, self.center, self.CELL_SIZE)
             self.ghosts.draw(self, self.center)

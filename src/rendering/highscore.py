@@ -8,12 +8,7 @@ from .custom_surface import CustomSurface
 class Highscore(CustomSurface):
     def __init__(self, file_path: str, size: Tuple[int, int]) -> None:
         self.scores: List[Dict[str, Any]] = []
-        if os.path.exists(file_path):
-            with open(file_path, "r") as f:
-                self.scores = json.load(f)
-            self.scores = sorted(self.scores,
-                                 key=lambda x: x['score'],
-                                 reverse=True)
+        self.path = file_path
         super().__init__(size)
 
     def print_empty(self) -> None:
@@ -27,6 +22,12 @@ class Highscore(CustomSurface):
 
     def setup(self, window: pygame.Surface) -> None:
         super().setup(window)
+        if os.path.exists(self.path):
+            with open(self.path, "r") as f:
+                self.scores = json.load(f)
+            self.scores = sorted(self.scores,
+                                 key=lambda x: x['score'],
+                                 reverse=True)
         if not self.scores:
             self.print_empty()
             return
@@ -50,9 +51,9 @@ class Highscore(CustomSurface):
                     run = False
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        run = False
-                    elif e.key == pygame.K_RETURN:
                         return "main"
+                    elif e.key == pygame.K_RETURN:
+                        run = False
             w, h = window.get_size()
             f_w, f_h = self.get_size()
             scene_w = ((w - f_w) // 2)
