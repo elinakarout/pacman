@@ -37,6 +37,7 @@ class Game:
         pygame.init()
         window = pygame.display.set_mode(flags=pygame.FULLSCREEN)
         pygame.display.set_caption("Pac-Man")
+        pygame.display.set_icon(pygame.image.load("pacraft_assets/Steve_front.png"))
         self.add_surface("main", MainMenu(window.get_size()))
         self.add_surface("start", Level(self.configs, window.get_size()))
         self.add_surface("highscore", Highscore(

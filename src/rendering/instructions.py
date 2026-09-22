@@ -37,9 +37,9 @@ class Instructions(CustomSurface):
                     return False
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_RETURN:
-                        return "main"
-                    elif e.key == pygame.K_ESCAPE:
                         run = False
+                    elif e.key == pygame.K_ESCAPE:
+                        return "main"
             window.blit(self, (0, 0))
             pygame.display.update()
         return "exit"

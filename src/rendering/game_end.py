@@ -16,7 +16,6 @@ class GameEnd(CustomSurface):
         text = "You win!"
         if res == "loser":
             text = "You lost. . ."
-        print(text)
         font = pygame.font.Font(self.font_path, 150)
         res = font.render(text, True, pygame.Color("white"))
         w, h = window.get_size()
