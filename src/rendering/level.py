@@ -1,8 +1,9 @@
 import math
+import time
 from typing import Tuple
 import pygame
 from mazegenerator import MazeGenerator
-from src.config import Config
+from src.config import Config, CHEATS
 from src.entities import Player, Ghosts
 from .custom_surface import CustomSurface
 
@@ -104,6 +105,17 @@ class Level(CustomSurface):
     def level_passed(self) -> bool:
         return not self.pacgums and not self.super_pacgums
 
+    def check_cheats(self):
+        if CHEATS["slow_ghost_speed"]:
+            self.ghosts.slow_ghosts_speed()
+            CHEATS["slow_ghost_speed"] = False
+        if CHEATS["extra_life"]:
+            self.player.lives += 1
+            CHEATS["extra_life"] = False
+        if CHEATS["increase_player_speed"]:
+            self.player.speed += 0.5
+            CHEATS["increase_player_speed"] = False
+
     def setup(self, window) -> None:
         self.fill((0, 0, 0))
         super().setup(window)
@@ -158,6 +170,7 @@ class Level(CustomSurface):
         clock = pygame.time.Clock()
         run = True
         while run:
+            self.check_cheats()
             dt = clock.tick(60) / 1000
             events = pygame.event.get()
             for e in events:
@@ -184,6 +197,12 @@ class Level(CustomSurface):
                 if self.player.lives != 0:
                     self.life_lost()
                 else:
+                    all_cells = self.width * self.height
+                    for i in range(all_cells):
+                        self.ghosts.add_ghost()
+                        self.ghosts.draw(self, self.center)
+                        window.blit(self, (0, 0))
+                        pygame.display.update()           
                     return "loser:" + str(self.player.score)
             if self.level_passed():
                 return "winner:" + str(self.player.score)
