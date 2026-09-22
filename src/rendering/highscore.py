@@ -25,10 +25,9 @@ class Highscore(CustomSurface):
         title_h = (h - f_h) // 5
         self.blit(font_s, (title_w, title_h))
 
-    def setup(self) -> None:
-        self.fill((0, 0, 0))
+    def setup(self, window: pygame.Surface) -> None:
+        super().setup(window)
         if not self.scores:
-            print(self.scores)
             self.print_empty()
             return
         font = pygame.font.Font(self.font_path, 32)
@@ -42,7 +41,7 @@ class Highscore(CustomSurface):
             self.blit(font_s, (score_w, score_h))
 
     def start(self, window: pygame.Surface) -> str:
-        self.setup()
+        self.setup(window)
         run = True
         while run:
             events = pygame.event.get()

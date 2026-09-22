@@ -1,5 +1,7 @@
 import pygame
 from typing import Dict
+
+from .game_end import GameEnd
 from .instructions import Instructions
 from .main_menu import MainMenu
 from .level import Level
@@ -13,6 +15,7 @@ class Game:
     def __init__(self, configs: Config) -> None:
         self.surfaces: SURFACES = {}
         self.configs = configs
+        self.score = 0
 
     def add_surface(
         self, name: str, surface: MainMenu | Level | Highscore
@@ -21,8 +24,11 @@ class Game:
 
     def play_scene(self, window: pygame.Surface, scene: str) -> str:
         if scene == "exit":
-            return "exit"
-        return self.surfaces[scene].start(window)
+            return scene
+        elif scene in {"winner", "loser"}:
+            return self.surfaces["game_end"].start(window, scene)
+        else:
+            return self.surfaces[scene].start(window)
 
     def start(self) -> None:
         pygame.init()
@@ -31,11 +37,13 @@ class Game:
         self.add_surface("main", MainMenu(window.get_size()))
         self.add_surface("start", Level(self.configs, window.get_size()))
         self.add_surface("highscore", Highscore(
-            "src/Rendering/highscore.json",
+            self.configs.highscore_filename,
             window.get_size())
         )
         self.add_surface("instructions", Instructions(window.get_size()))
-        current = "main"
+        self.add_surface("game_end", GameEnd(window.get_size()),
+                         self.configs.highscore_filename)
+        current = "loser"
         run = True
         while run:
             if current == "exit":
