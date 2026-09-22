@@ -16,7 +16,18 @@ class Level(CustomSurface):
         self.forbidden = pygame.image.load(
             f"{self.sprites_dir}/water_block.png")
         self.current_level = 1
-        self.timer = 100
+        self.CHEAT_BUTTONS = {
+            pygame.K_i: "invincible_mode",
+            pygame.K_e: "always_edible",
+            pygame.K_f: "ghost_freeze",
+            pygame.K_l: "skip_level",
+            pygame.K_MINUS: "slow_ghost_speed",
+            pygame.K_EQUALS: "increase_player_speed",
+            pygame.K_g: "add_ghost",
+            pygame.K_x: "extra_life"
+        }
+        self.max_time = 100
+        self.timer = self.max_time
         self.paused = False
         self.width = configs.width
         self.height = configs.height
@@ -109,6 +120,16 @@ class Level(CustomSurface):
         self.player.row, self.player.col = self.player.get_start(self.maze)
         for ghost in self.ghosts.ghosts:
             ghost.reset(self.ghosts.speed)
+            match ghost.name:
+                case "BLINKY":
+                    ghost.skin("pacraft_assets/Enderman_front.png")
+                case "INKY":
+                    ghost.skin("pacraft_assets/Zombie_front.png")
+                case "PINKY":
+                    ghost.skin("pacraft_assets/Skeletion.png")
+                case "CLYDE":
+                    ghost.skin("pacraft_assets/Spider_front.png")
+
 
     def eat_super_pacgum(self, pos: tuple[int, int]) -> None:
         self.super_pacgums.remove(pos)
@@ -119,7 +140,7 @@ class Level(CustomSurface):
     def level_passed(self) -> bool:
         return not self.pacgums and not self.super_pacgums
 
-    def check_cheats(self) -> None:
+    def check_cheats(self, window: pygame.Surface) -> None:
         if CHEATS["slow_ghost_speed"]:
             self.ghosts.slow_ghosts_speed()
             CHEATS["slow_ghost_speed"] = False
@@ -129,6 +150,12 @@ class Level(CustomSurface):
         if CHEATS["increase_player_speed"]:
             self.player.speed += 0.5
             CHEATS["increase_player_speed"] = False
+        if CHEATS["skip_level"]:
+            self.advance(window)
+            CHEATS["skip_level"] = False
+        if CHEATS['add_ghost']:
+            self.ghosts.add_ghost()
+            CHEATS['add_ghost'] = False
 
     def setup(self, window: pygame.Surface) -> None:
         self.fill((0, 0, 0))
@@ -180,14 +207,30 @@ class Level(CustomSurface):
             self.pacgums.remove(super_pacgum)
         self.total_pacgums = len(self.pacgums)
 
-    def start(self, window: pygame.Surface) -> str:
+    def advance(self, window: pygame.Surface):
+        if self.current_level == 10:
+            return "winner:" + str(self.player.score)
+        self.current_level += 1
+        self.max_time -= 5
+        self.timer = self.max_time
+        self.maze = MazeGenerator((self.width,
+                                  self.height)).maze
         self.setup(window)
+        return ""
+        
+
+    def start(self, window: pygame.Surface) -> str:
+        for c in CHEATS.keys():
+            CHEATS[c] = False
+        self.timer = self.max_time
+        self.setup(window)
+        self.player.change_skin("pacraft_assets/Steve_front.png")
         TIMER = pygame.USEREVENT + 1
         pygame.time.set_timer(TIMER, 1000)
         clock = pygame.time.Clock()
         run = True
         while run:
-            self.check_cheats()
+            self.check_cheats(window)
             if not self.timer:
                 all_cells = self.width * self.height
                 for i in range(all_cells):
@@ -208,6 +251,21 @@ class Level(CustomSurface):
                         run = False
                     elif e.key == pygame.K_p:
                         self.paused = not self.paused
+                    elif e.key in self.CHEAT_BUTTONS:
+                        key = self.CHEAT_BUTTONS[e.key]
+                        CHEATS[key] = not CHEATS[key]
+                        CHEATS["cheater"] = True
+                        match key:
+                            case "always_edible":
+                                if CHEATS["always_edible"]:
+                                    self.ghosts.always_edible()
+                                else:
+                                    self.ghosts.not_always_edible()
+                            case "ghost_freeze":
+                                if CHEATS["ghost_freeze"]:
+                                    self.ghosts.freeze()
+                                else:
+                                    self.ghosts.unfreeze()
                     else:
                         self.player.handle_key(e.key)
                 elif e.type == TIMER and not self.paused:
@@ -237,14 +295,9 @@ class Level(CustomSurface):
                         pygame.display.update()
                     return "loser:" + str(self.player.score)
             if self.level_passed():
-                if self.current_level == 10:
-                    return "winner:" + str(self.player.score)
-                self.current_level += 1
-                self.timer -= 5
-                self.maze = MazeGenerator((self.width,
-                                          self.height)).maze
-                self.setup(window)
-                continue
+                game_end = self.advance(window)
+                if game_end:
+                    return game_end
             self.player.update(dt)
             self.ghosts.update(
                 dt, (self.player.col, self.player.row),

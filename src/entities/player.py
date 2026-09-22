@@ -1,5 +1,6 @@
 import pygame
 from typing import Union
+from ..config.data import CHEATS
 
 # (row, col, wall bit)
 DIRECTIONS = {
@@ -16,18 +17,13 @@ ANGLES = {"down": 0, "right": 90, "up": 180, "left": 270}
 class Player:
     def __init__(
         self, maze: list[list[int]], lives: int,
-        cell_size: int, speed: float = 4
+        cell_size: int, speed: float = 4,
+
     ) -> None:
+        self.player_size = cell_size - 8
         self.timer = 0.0
         self.facing = "right"
-        size = cell_size - 8
-        base = pygame.image.load(
-            "pacraft_assets/Steve_front.png").convert_alpha()
-        base_image = pygame.transform.smoothscale(base, (size, size))
-        self.images = {
-            name: pygame.transform.rotate(base_image, angle)
-            for name, angle in ANGLES.items()
-        }
+        self.change_skin("pacraft_assets/Steve_front.png")
         self.maze = maze
         self.row, self.col = self.get_start(maze)
         self.lives = lives
@@ -43,6 +39,15 @@ class Player:
         while maze[y][x] == 15:
             x += 1
         return (y, x)
+
+    def change_skin(self, new_image_path: str) -> None:
+        size = self.player_size
+        base = pygame.image.load(new_image_path).convert_alpha()
+        base_image = pygame.transform.smoothscale(base, (size, size))
+        self.images = {
+            name: pygame.transform.rotate(base_image, angle)
+            for name, angle in ANGLES.items()
+        }
 
     def can_move(self, direction: str) -> bool:
         _, _, bit = DIRECTIONS[direction]
@@ -65,6 +70,11 @@ class Player:
             self.row += d_row
             self.col += d_col
 
+    def increase_speed(self) -> None:
+        if self.speed > 6:
+            return
+        self.speed += 0.5
+
     def update(self, dt: float) -> None:
         self.timer += dt
         if self.timer < 1 / self.speed:
@@ -82,6 +92,8 @@ class Player:
 
     def draw(self, surface: pygame.Surface, origin: tuple[int, int],
              cell_size: int) -> None:
+        if CHEATS["cheater"]:
+            self.change_skin("pacraft_assets/Chicken.png")
         img = self.images[self.facing]
         x = (
             origin[0] + self.col * cell_size

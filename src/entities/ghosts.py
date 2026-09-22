@@ -17,6 +17,7 @@ class Ghost:
     home_col: int
     home_row: int
     start_delay: int
+    size: int
     col: int
     row: int
     asset: str
@@ -32,7 +33,7 @@ class Ghost:
         self, surface: pygame.Surface,
         origin: tuple[int, int], cell_size: int
     ) -> None:
-        img = self.images["right"]
+        img = self.images["down"]
         x = (
             origin[0] + self.col * cell_size
             + (cell_size - img.get_width()) // 2
@@ -43,9 +44,27 @@ class Ghost:
         )
         surface.blit(img, (x, y))
 
+    def skin(self, asset):
+            base = pygame.image.load(asset).convert_alpha()
+            base_image = pygame.transform.smoothscale(base, (self.size,
+                                                             self.size))
+            self.images = {
+                name: pygame.transform.rotate(base_image, angle)
+                for name, angle in ANGLES.items()
+            }
+
     def make_edible(self) -> None:
         self.state = "edible"
         self.edible_time = 0.0
+        match self.name:
+            case "BLINKY":
+                self.skin("pacraft_assets/Enderman_front_distress.png")
+            case "INKY":
+                self.skin("pacraft_assets/Zombie_front_distress-export.png")
+            case "PINKY":
+                self.skin("pacraft_assets/Skeletion_distress.png")
+            case "CLYDE":
+                self.skin("pacraft_assets/Spider_front_distress.png")
 
     def reset(self, speed: float) -> None:
         self.col = self.home_col
@@ -150,9 +169,19 @@ class Ghost:
         if self.state == "eaten":
             return
         if self.state == "edible":
+            # self.skin()
             self.edible_time += dt
             if self.edible_time >= EDIBLE_DURATION:
                 if not CHEATS["always_edible"]:
+                    match self.name:
+                        case "BLINKY":
+                            self.skin("pacraft_assets/Enderman_front.png")
+                        case "INKY":
+                            self.skin("pacraft_assets/Zombie_front.png")
+                        case "PINKY":
+                            self.skin("pacraft_assets/Skeletion.png")
+                        case "CLYDE":
+                            self.skin("pacraft_assets/Spider_front.png")
                     self.state = "chase"
         self.timer += dt
         if self.timer < 1 / self.speed:
@@ -189,6 +218,7 @@ class Ghosts:
             name="BLINKY",
             home_col=1,
             home_row=0,
+            size=self.cell_size - 8,
             start_delay=2,
             col=1,
             row=0,
@@ -200,6 +230,7 @@ class Ghosts:
             name="PINKY",
             home_col=1,
             home_row=rows - 1,
+            size=self.cell_size - 8,
             start_delay=4,
             col=1,
             row=rows - 1,
@@ -211,6 +242,7 @@ class Ghosts:
             name="INKY",
             home_col=cols - 2,
             home_row=rows - 1,
+            size=self.cell_size - 8,
             start_delay=6,
             col=cols - 2,
             row=rows - 1,
@@ -222,6 +254,7 @@ class Ghosts:
             name="CLYDE",
             home_col=cols - 2,
             home_row=0,
+            size=self.cell_size - 8,
             start_delay=8,
             col=cols - 2,
             row=0,
@@ -229,14 +262,8 @@ class Ghosts:
             speed=self.speed,
             state="wait"
         ))
-        size = self.cell_size - 8
         for ghost in ghosts:
-            base = pygame.image.load(ghost.asset).convert_alpha()
-            base_image = pygame.transform.smoothscale(base, (size, size))
-            ghost.images = {
-                name: pygame.transform.rotate(base_image, angle)
-                for name, angle in ANGLES.items()
-            }
+            ghost.skin(ghost.asset)
         return ghosts
 
     def update(
@@ -264,6 +291,15 @@ class Ghosts:
     def not_always_edible(self) -> None:
         for ghost in self.ghosts:
             ghost.reset(self.speed)
+            match ghost.name:
+                case "BLINKY":
+                    ghost.skin("pacraft_assets/Enderman_front.png")
+                case "INKY":
+                    ghost.skin("pacraft_assets/Zombie_front.png")
+                case "PINKY":
+                    ghost.skin("pacraft_assets/Skeletion.png")
+                case "CLYDE":
+                    ghost.skin("pacraft_assets/Spider_front.png")
 
     def slow_ghosts_speed(self) -> None:
         for ghost in self.ghosts:
@@ -287,6 +323,7 @@ class Ghosts:
             home_row=home_row,
             start_delay=template.start_delay,
             col=home_col,
+            size=self.cell_size - 8,
             row=home_row,
             asset=template.asset,
             speed=self.speed,
@@ -319,6 +356,15 @@ class Ghosts:
             if ghost.state == "edible":
                 if not CHEATS["always_edible"]:
                     ghost.reset(self.speed)
+                    match ghost.name:
+                        case "BLINKY":
+                            ghost.skin("pacraft_assets/Enderman_front.png")
+                        case "INKY":
+                            ghost.skin("pacraft_assets/Zombie_front.png")
+                        case "PINKY":
+                            ghost.skin("pacraft_assets/Skeletion.png")
+                        case "CLYDE":
+                            ghost.skin("pacraft_assets/Spider_front.png")
                 ate = True
             elif ghost.state == "chase":
                 if not CHEATS["invincible_mode"]:
