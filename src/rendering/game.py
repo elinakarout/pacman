@@ -1,6 +1,5 @@
 import pygame
 from typing import Dict
-
 from .game_end import GameEnd
 from .instructions import Instructions
 from .main_menu import MainMenu

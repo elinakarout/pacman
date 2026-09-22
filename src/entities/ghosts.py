@@ -1,7 +1,9 @@
 import pygame
+import random
 from collections import deque
 from typing import Literal
 from dataclasses import dataclass, field
+from src.config import CHEATS
 from .player import DIRECTIONS, ANGLES
 
 
@@ -149,7 +151,8 @@ class Ghost:
         if self.state == "edible":
             self.edible_time += dt
             if self.edible_time >= EDIBLE_DURATION:
-                self.state = "chase"
+                if not CHEATS["always_edible"]:
+                    self.state = "chase"
         self.timer += dt
         if self.timer < 1 / self.speed:
             return
@@ -253,6 +256,50 @@ class Ghosts:
         for ghost in self.ghosts:
             ghost.draw(surface, origin, self.cell_size)
 
+    def always_edible(self):
+        for ghost in self.ghosts:
+            ghost.make_edible()
+    
+    def not_always_edible(self):
+        for ghost in self.ghosts:
+            ghost.reset(self.speed)
+
+    def slow_ghosts_speed(self):
+        for ghost in self.ghosts:
+            if ghost.speed < 0.5:
+                ghost.speed -= 0.5
+    
+    def random_open_cell(self) -> tuple[int, int]:
+        rows, cols = len(self.maze), len(self.maze[0])
+        while True:
+            row = random.randrange(rows)
+            col = random.randrange(cols)
+            if self.maze[row][col] != 15:
+                return row, col
+
+    def add_ghost(self) -> Ghost:
+        template = random.choice(self.ghosts)
+        home_row, home_col = self.random_open_cell()
+        ghost = Ghost(
+            name=template.name,
+            home_col=home_col,
+            home_row=home_row,
+            start_delay=template.start_delay,
+            col=home_col,
+            row=home_row,
+            asset=template.asset,
+            speed=self.speed,
+            state="wait",
+        )
+        size = self.cell_size - 8
+        base = pygame.image.load(ghost.asset).convert_alpha()
+        base_image = pygame.transform.smoothscale(base, (size, size))
+        ghost.images = {
+            name: pygame.transform.rotate(base_image, angle)
+            for name, angle in ANGLES.items()
+        }
+        self.ghosts.append(ghost)
+
     def collide(self, position: tuple[int, int]) -> tuple[bool, bool]:
         row, col = position
         killed = False
@@ -261,8 +308,10 @@ class Ghosts:
             if ghost.row != row or ghost.col != col:
                 continue
             if ghost.state == "edible":
-                ghost.reset(self.speed)
+                if not CHEATS["always_edible"]:
+                    ghost.reset(self.speed)
                 ate = True
             elif ghost.state == "chase":
-                killed = True
+                if not CHEATS["invincible_mode"]:
+                    killed = True
         return killed, ate

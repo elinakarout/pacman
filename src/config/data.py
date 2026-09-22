@@ -3,6 +3,19 @@ from pydantic_core import PydanticCustomError
 from typing import Self
 
 
+CHEATS = {
+    "cheater": False,
+    "invincible_mode": False,
+    "always_edible": False,
+    "ghost_freeze": False,
+    "skip_level": False,
+    "slow_ghost_speed": False,
+    "extra_life": False,
+    "increase_player_speed": False,
+    "add_ghost": False
+}
+
+
 class Config(BaseModel):
     highscore_filename: str
     lives: int
