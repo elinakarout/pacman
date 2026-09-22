@@ -1,13 +1,14 @@
 import json
 from typing import Tuple
 import pygame
+from pathlib import Path
 from .custom_surface import CustomSurface
 
 
 class GameEnd(CustomSurface):
     def __init__(self, highscore_path, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.highscore_path = highscore_path
+        self.highscore_path = Path("./" + highscore_path)
 
     def setup(self, window: pygame.Surface,
               res: bool):
@@ -28,10 +29,10 @@ class GameEnd(CustomSurface):
         self.blit(user_input, (pos_x + 150, pos_y * 2))
 
     def valid_name(self, name: str):
-        return len(name.strip()) >= 3
+        return len(name.strip()) >= 2
 
     def start(self, window: pygame.Surface,
-              winner: bool):
+              winner: str, score: int):
         self.setup(window, winner)
         run = True
         name = ""
@@ -44,15 +45,16 @@ class GameEnd(CustomSurface):
                 elif e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_RETURN:
                         if self.valid_name(name):
-                            with open(self.highscore_path, "r+") as f:
-                                scores = json.load(f)
-                                lowest = min(scores, key=lambda x: x['score'])
-                                # if lowest 
-                                scores = sorted(scores, key=lambda x: x['score'],
-                                                reverse=True)    
-                                if len(scores) >= 10:
-                                    scores.popitem()
-                                    json.dump(scores, f)
+                            try:
+                                with open(self.highscore_path, "r") as f:
+                                    scores = json.load(f)
+                            except (FileNotFoundError, json.JSONDecodeError):
+                                scores = []
+                            scores.append({"name": name, "score": score})
+                            scores = sorted(scores, key=lambda x: x['score'],
+                                            reverse=True)[:10]
+                            with open(self.highscore_path, "w") as f:
+                                json.dump(scores, f, indent=4)
                             return "main"
                     elif e.key == pygame.K_ESCAPE:
                         return "exit"

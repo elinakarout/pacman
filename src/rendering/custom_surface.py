@@ -2,7 +2,7 @@ import pygame
 
 
 class CustomSurface(pygame.Surface):
-    def __init__(self, 
+    def __init__(self,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.sprites_dir = "./pacraft_assets"

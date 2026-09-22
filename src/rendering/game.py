@@ -8,6 +8,7 @@ from .level import Level
 from .highscore import Highscore
 from src.config import Config
 
+
 SURFACES = Dict[str, MainMenu | Level | Highscore]
 
 
@@ -23,10 +24,13 @@ class Game:
         self.surfaces[name] = surface
 
     def play_scene(self, window: pygame.Surface, scene: str) -> str:
-        if scene == "exit":
+        answer = scene.split(":")
+        if answer[0] == "exit":
             return scene
-        elif scene in {"winner", "loser"}:
-            return self.surfaces["game_end"].start(window, scene)
+        elif answer[0] in {"winner", "loser"}:
+            return self.surfaces["game_end"].start(window,
+            answer[0],
+            int(answer[1]))
         else:
             return self.surfaces[scene].start(window)
 
@@ -41,9 +45,11 @@ class Game:
             window.get_size())
         )
         self.add_surface("instructions", Instructions(window.get_size()))
-        self.add_surface("game_end", GameEnd(window.get_size()),
-                         self.configs.highscore_filename)
-        current = "loser"
+        self.add_surface(
+            "game_end", GameEnd(self.configs.highscore_filename,
+            window.get_size())
+        )
+        current = "main"
         run = True
         while run:
             if current == "exit":

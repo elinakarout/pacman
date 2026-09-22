@@ -42,11 +42,11 @@ class Level(CustomSurface):
         x2, y2 = end
         double = False
         if abs(x2 - x1) > abs(y2 - y1):
-            wall = pygame.image.load("/sgoinfre/kchami/pacman/pacraft_assets/wall_north_south.png").convert_alpha()
+            wall = pygame.image.load("pacraft_assets/wall_north_south.png").convert_alpha()
             wall 
         else:
             double = True
-            wall = pygame.image.load("/sgoinfre/kchami/pacman/pacraft_assets/wall_top.png").convert_alpha()
+            wall = pygame.image.load("pacraft_assets/wall_top.png").convert_alpha()
         dx = x2 - x1
         dy = y2 - y1
         l = int(math.hypot(dx, dy))
@@ -184,9 +184,9 @@ class Level(CustomSurface):
                 if self.player.lives != 0:
                     self.life_lost()
                 else:
-                    return "game_over"
+                    return "loser:" + str(self.player.score)
             if self.level_passed():
-                return "level_passed"
+                return "winner:" + str(self.player.score)
             self.player.update(dt)
             self.ghosts.update(
                 dt, (self.player.col, self.player.row),
