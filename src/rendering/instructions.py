@@ -1,10 +1,11 @@
+from typing import Any
 import pygame
 
 from .custom_surface import CustomSurface
 
 
 class Instructions(CustomSurface):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.instructions = [
             "Use UP, DOWN, LEFT, RIGHT to move",
@@ -27,14 +28,14 @@ class Instructions(CustomSurface):
                                  pygame.Color("white"))
             self.blit(font_s, (ins_x, ins_y))
 
-    def start(self, window: pygame.Surface):
+    def start(self, window: pygame.Surface) -> str:
         self.setup(window)
         run = True
         while run:
             events = pygame.event.get()
             for e in events:
                 if e.type == pygame.QUIT:
-                    return False
+                    return "exit"
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_RETURN:
                         run = False

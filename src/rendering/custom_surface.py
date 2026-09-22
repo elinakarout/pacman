@@ -1,9 +1,10 @@
+from typing import Any
 import pygame
 
 
 class CustomSurface(pygame.Surface):
     def __init__(self,
-                 *args, **kwargs):
+                 *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.sprites_dir = "./pacraft_assets"
         self.font_path = "src/config/Minecraft.ttf"
@@ -12,8 +13,9 @@ class CustomSurface(pygame.Surface):
         self.fill((0, 0, 0))
         self.draw_background(window)
 
-    def draw_background(self, window: pygame.Surface):
-        cell = pygame.image.load(f"{self.sprites_dir}/Grass_background.png").convert_alpha()
+    def draw_background(self, window: pygame.Surface) -> None:
+        cell = pygame.image.load(
+            f"{self.sprites_dir}/Grass_background.png").convert_alpha()
         w, h = window.get_size()
         c_w, c_h = cell.get_size()
         total_rows = (w // c_w)

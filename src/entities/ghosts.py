@@ -257,19 +257,19 @@ class Ghosts:
         for ghost in self.ghosts:
             ghost.draw(surface, origin, self.cell_size)
 
-    def always_edible(self):
+    def always_edible(self) -> None:
         for ghost in self.ghosts:
             ghost.make_edible()
-    
-    def not_always_edible(self):
+
+    def not_always_edible(self) -> None:
         for ghost in self.ghosts:
             ghost.reset(self.speed)
 
-    def slow_ghosts_speed(self):
+    def slow_ghosts_speed(self) -> None:
         for ghost in self.ghosts:
             if ghost.speed < 0.5:
                 ghost.speed -= 0.5
-    
+
     def random_open_cell(self) -> tuple[int, int]:
         rows, cols = len(self.maze), len(self.maze[0])
         while True:

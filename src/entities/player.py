@@ -16,12 +16,13 @@ ANGLES = {"down": 0, "right": 90, "up": 180, "left": 270}
 class Player:
     def __init__(
         self, maze: list[list[int]], lives: int,
-        cell_size: int, speed: int = 4
+        cell_size: int, speed: float = 4
     ) -> None:
         self.timer = 0.0
         self.facing = "right"
         size = cell_size - 8
-        base = pygame.image.load("pacraft_assets/Steve_front.png").convert_alpha()
+        base = pygame.image.load(
+            "pacraft_assets/Steve_front.png").convert_alpha()
         base_image = pygame.transform.smoothscale(base, (size, size))
         self.images = {
             name: pygame.transform.rotate(base_image, angle)

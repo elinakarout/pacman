@@ -1,5 +1,4 @@
 import math
-import time
 from typing import Tuple
 import pygame
 from mazegenerator import MazeGenerator
@@ -45,20 +44,22 @@ class Level(CustomSurface):
         x2, y2 = end
         double = False
         if abs(x2 - x1) > abs(y2 - y1):
-            wall = pygame.image.load("pacraft_assets/wall_north_south.png").convert_alpha()
-            wall 
+            wall = pygame.image.load(
+                "pacraft_assets/wall_north_south.png"
+            ).convert_alpha()
         else:
             double = True
-            wall = pygame.image.load("pacraft_assets/wall_top.png").convert_alpha()
+            wall = pygame.image.load(
+                "pacraft_assets/wall_top.png").convert_alpha()
         dx = x2 - x1
         dy = y2 - y1
-        l = int(math.hypot(dx, dy))
-        if not l:
-            l = 1
+        ln = int(math.hypot(dx, dy))
+        if not ln:
+            ln = 1
         wall_thickness = wall.get_height()
         if double:
             wall_thickness *= 2
-        scaled = pygame.transform.scale(wall, (l, wall_thickness))
+        scaled = pygame.transform.scale(wall, (ln, wall_thickness))
         mid_x = (x1 + x2) / 2
         mid_y = (y1 + y2) / 2
         rect = scaled.get_rect(center=(mid_x, mid_y))
@@ -75,13 +76,14 @@ class Level(CustomSurface):
             x = self.center[0] + col * self.CELL_SIZE + (half * 1.5)
             y = self.center[1] + row * self.CELL_SIZE + (half * 1.5)
             self.blit(gum, (x, y))
-        sword = pygame.image.load("pacraft_assets/nether_sword.png").convert_alpha()
+        sword = pygame.image.load(
+            "pacraft_assets/nether_sword.png").convert_alpha()
         for row, col in self.super_pacgums:
             x = self.center[0] + col * self.CELL_SIZE + half
             y = self.center[1] + row * self.CELL_SIZE + half
             self.blit(sword, (x, y))
 
-    def draw_level_and_timer(self):
+    def draw_level_and_timer(self) -> None:
         message = f"Level-{self.current_level} Time: {self.timer}"
         if self.timer <= 10:
             mes_rect = self.font.render(message, True, (252, 3, 3))
@@ -117,7 +119,7 @@ class Level(CustomSurface):
     def level_passed(self) -> bool:
         return not self.pacgums and not self.super_pacgums
 
-    def check_cheats(self):
+    def check_cheats(self) -> None:
         if CHEATS["slow_ghost_speed"]:
             self.ghosts.slow_ghosts_speed()
             CHEATS["slow_ghost_speed"] = False
@@ -128,7 +130,7 @@ class Level(CustomSurface):
             self.player.speed += 0.5
             CHEATS["increase_player_speed"] = False
 
-    def setup(self, window) -> None:
+    def setup(self, window: pygame.Surface) -> None:
         self.fill((0, 0, 0))
         self.paused = False
         super().setup(window)
@@ -192,7 +194,7 @@ class Level(CustomSurface):
                     self.ghosts.add_ghost()
                     self.ghosts.draw(self, self.center)
                     window.blit(self, (0, 0))
-                    pygame.display.update() 
+                    pygame.display.update()
                 return "loser:" + str(self.player.score)
             dt = clock.tick(60) / 1000
             events = pygame.event.get()
@@ -232,7 +234,7 @@ class Level(CustomSurface):
                         self.ghosts.add_ghost()
                         self.ghosts.draw(self, self.center)
                         window.blit(self, (0, 0))
-                        pygame.display.update()           
+                        pygame.display.update()
                     return "loser:" + str(self.player.score)
             if self.level_passed():
                 if self.current_level == 10:

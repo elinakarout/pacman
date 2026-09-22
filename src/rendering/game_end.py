@@ -1,37 +1,39 @@
+from typing import Any
 import json
-from typing import Tuple
 import pygame
 from pathlib import Path
 from .custom_surface import CustomSurface
 
 
 class GameEnd(CustomSurface):
-    def __init__(self, highscore_path, *args, **kwargs):
+    def __init__(self, highscore_path: str, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.highscore_path = Path("./" + highscore_path)
 
-    def setup(self, window: pygame.Surface,
-              res: bool):
+    def setup(self,  # type: ignore[override]
+              window: pygame.Surface, result: str) -> None:
         super().setup(window)
         text = "You win!"
-        if res == "loser":
+        if result == "loser":
             text = "You lost. . ."
         font = pygame.font.Font(self.font_path, 150)
-        res = font.render(text, True, pygame.Color("white"))
+        text_surface = font.render(text, True, pygame.Color("white"))
         w, h = window.get_size()
-        t_w, t_h = res.get_size()
+        t_w, t_h = text_surface.get_size()
         pos_x = (w - t_w) // 2
         pos_y = (h - t_h) // 5
         font = pygame.font.Font(self.font_path, 50)
-        user_input = font.render("Add your name: ", True, pygame.Color("White"))
-        self.blit(res, (pos_x, pos_y))
+        user_input = font.render(
+            "Add your name: ", True, pygame.Color("White")
+        )
+        self.blit(text_surface, (pos_x, pos_y))
         self.blit(user_input, (pos_x + 150, pos_y * 2))
 
-    def valid_name(self, name: str):
+    def valid_name(self, name: str) -> bool:
         return len(name.strip()) >= 2
 
     def start(self, window: pygame.Surface,
-              winner: str, score: int):
+              winner: str, score: int) -> str:
         self.setup(window, winner)
         run = True
         name = ""
@@ -71,3 +73,4 @@ class GameEnd(CustomSurface):
             self.blit(res, (x, y))
             window.blit(self, (0, 0))
             pygame.display.update()
+        return "exit"
