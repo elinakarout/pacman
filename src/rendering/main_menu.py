@@ -5,7 +5,11 @@ from .button import Button
 
 
 class MainMenu(CustomSurface):
+    """MainMenu main class."""
+
     def __init__(self, size: Tuple[int, int]) -> None:
+        """MainMenu init."""
+
         self.buttons: Dict[str, Button] = {}
         self.states = [
             "start",
@@ -16,6 +20,8 @@ class MainMenu(CustomSurface):
         super().__init__(size)
 
     def buttons_init(self, width: int, height: int) -> List[Button]:
+        """Create buttons."""
+
         OFFSET = 100
         FONT = (self.font_path, 50)
         BUTTON_SIZE = (350, 100)
@@ -36,6 +42,8 @@ class MainMenu(CustomSurface):
         return res
 
     def setup(self, window: pygame.Surface) -> None:
+        """Setup Interface."""
+
         super().setup(window)
         font = pygame.font.Font(self.font_path, 150)
         font_s = font.render("Pac-Craft", True,
@@ -51,10 +59,14 @@ class MainMenu(CustomSurface):
         self.blit(font_s, (title_w, title_h))
 
     def check_button_clicked(self) -> Optional[Button]:
+        """Check buttons."""
+
         buttons = [b for b in self.buttons.values() if b.check_click()]
         return buttons[0] if buttons else None
 
     def start(self, window: pygame.Surface) -> str:
+        """Start screen."""
+
         self.setup(window)
         run = True
         for b in self.buttons.values():

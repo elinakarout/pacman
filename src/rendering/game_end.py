@@ -7,13 +7,19 @@ from .custom_surface import CustomSurface
 
 
 class GameEnd(CustomSurface):
+    """GameEnd main class."""
+
     def __init__(self, highscore_path: str, *args: Any, **kwargs: Any) -> None:
+        """Initialize class."""
+
         super().__init__(*args, **kwargs)
         self.highscore_path = Path("./" + highscore_path)
 
     def wrap_text(
         self, text: str, font: pygame.font.Font, max_width: int
     ) -> list[str]:
+        """Wrap text."""
+
         words = text.split()
         lines = []
         current = ""
@@ -30,6 +36,7 @@ class GameEnd(CustomSurface):
 
     def render_end(self,
                    window: pygame.Surface, result: str, score: int) -> None:
+        """Render end screen."""
         super().setup(window)
         cheater = CHEATS["cheater"]
         font_size = 150
@@ -73,10 +80,14 @@ class GameEnd(CustomSurface):
         self.name_input_y = input_y + user_input.get_height() + 20
 
     def valid_name(self, name: str) -> bool:
+        """Check valid name."""
+
         return len(name.strip()) >= 2
 
     def start(self, window: pygame.Surface,
               winner: str, score: int) -> str:
+        """Start screen."""
+
         self.render_end(window, winner, score)
         run = True
         name = ""

@@ -8,6 +8,7 @@ from .custom_surface import CustomSurface
 
 
 class Level(CustomSurface):
+    """Level main class."""
     def __init__(
         self, configs: Config, size: Tuple[int, int]
     ) -> None:
@@ -41,6 +42,8 @@ class Level(CustomSurface):
         self.font = pygame.font.Font(self.font_path, 40)
 
     def get_center(self, width: int, height: int) -> Tuple[int, int]:
+        """Get surface center."""
+
         s_width, s_height = self.get_size()
         m_width = width * self.CELL_SIZE
         m_height = height * self.CELL_SIZE
@@ -51,6 +54,8 @@ class Level(CustomSurface):
     def draw_wall_at(
         self, start: Tuple[int, int], end: Tuple[int, int]
     ) -> None:
+        """Draw wall at position."""
+
         x1, y1 = start
         x2, y2 = end
         double = False
@@ -77,6 +82,8 @@ class Level(CustomSurface):
         self.blit(scaled, rect.topleft)
 
     def draw_pacgums(self) -> None:
+        """Draw gums."""
+
         gum = pygame.image.load("pacraft_assets/Emerald.png").convert_alpha()
         half = self.CELL_SIZE // 6
         s = gum.get_size()
@@ -95,6 +102,8 @@ class Level(CustomSurface):
             self.blit(sword, (x, y))
 
     def draw_level_and_timer(self) -> None:
+        """Draw level number and timer."""
+
         message = f"Level-{self.current_level} Time: {self.timer}"
         if self.timer <= 10:
             mes_rect = self.font.render(message, True, (252, 3, 3))
@@ -105,6 +114,8 @@ class Level(CustomSurface):
         self.blit(mes_rect, size)
 
     def draw_score(self) -> None:
+        """Draw score."""
+
         margin = 20
         width = self.get_width()
         score = self.font.render(
@@ -117,6 +128,8 @@ class Level(CustomSurface):
         self.blit(lives, (margin, margin))
 
     def life_lost(self) -> None:
+        """Decrease life."""
+
         self.player.row, self.player.col = self.player.get_start(self.maze)
         for ghost in self.ghosts.ghosts:
             ghost.reset(self.ghosts.speed)
@@ -131,15 +144,21 @@ class Level(CustomSurface):
                     ghost.skin("pacraft_assets/Spider_front.png")
 
     def eat_super_pacgum(self, pos: tuple[int, int]) -> None:
+        """Eat gum."""
+
         self.super_pacgums.remove(pos)
         self.player.score += self.points_per_super_pacgum
         for ghost in self.ghosts.ghosts:
             ghost.make_edible()
 
     def level_passed(self) -> bool:
+        """Check level."""
+
         return not self.pacgums and not self.super_pacgums
 
-    def check_cheats(self, window: pygame.Surface) -> None:
+    def check_cheats(self, window: pygame.Surface) -> str:
+        """Check cheats."""
+
         if CHEATS["slow_ghost_speed"]:
             self.ghosts.slow_ghosts_speed()
             CHEATS["slow_ghost_speed"] = False
@@ -150,13 +169,18 @@ class Level(CustomSurface):
             self.player.increase_speed()
             CHEATS["increase_player_speed"] = False
         if CHEATS["skip_level"]:
-            self.advance(window)
+            end = self.advance(window)
+            if end:
+                return end
             CHEATS["skip_level"] = False
         if CHEATS['add_ghost']:
             self.ghosts.add_ghost()
             CHEATS['add_ghost'] = False
+        return ""
 
     def setup(self, window: pygame.Surface) -> None:
+        """Setup surface."""
+
         self.fill((0, 0, 0))
         self.paused = False
         super().setup(window)
@@ -222,6 +246,8 @@ class Level(CustomSurface):
         return ""
 
     def start(self, window: pygame.Surface) -> str:
+        """Start screen."""
+
         for c in CHEATS.keys():
             CHEATS[c] = False
         self.current_level = 1
@@ -234,7 +260,9 @@ class Level(CustomSurface):
         clock = pygame.time.Clock()
         run = True
         while run:
-            self.check_cheats(window)
+            end = self.check_cheats(window)
+            if end:
+                return end
             if not self.timer:
                 all_cells = self.width * self.height
                 for i in range(all_cells + 50):
@@ -264,8 +292,6 @@ class Level(CustomSurface):
                             case "always_edible":
                                 if CHEATS["always_edible"]:
                                     self.ghosts.always_edible()
-                                else:
-                                    self.ghosts.not_always_edible()
                             case "ghost_freeze":
                                 if CHEATS["ghost_freeze"]:
                                     self.ghosts.freeze()

@@ -13,6 +13,8 @@ OPPOSITE = {"up": "down", "down": "up", "left": "right", "right": "left"}
 
 @dataclass
 class Ghost:
+    """Ghost main class."""
+
     name: Literal["INKY", "PINKY", "BLINKY", "CLYDE"]
     home_col: int
     home_row: int
@@ -33,6 +35,8 @@ class Ghost:
         self, surface: pygame.Surface,
         origin: tuple[int, int], cell_size: int
     ) -> None:
+        """Draw sprite."""
+
         img = self.images["down"]
         x = (
             origin[0] + self.col * cell_size
@@ -45,6 +49,8 @@ class Ghost:
         surface.blit(img, (x, y))
 
     def skin(self, asset: str) -> None:
+        """Set sprite."""
+
         base = pygame.image.load(asset).convert_alpha()
         base_image = pygame.transform.smoothscale(
             base, (self.size, self.size)
@@ -55,6 +61,8 @@ class Ghost:
         }
 
     def make_edible(self) -> None:
+        """Change edible."""
+
         self.state = "edible"
         self.edible_time = 0.0
         match self.name:
@@ -68,6 +76,8 @@ class Ghost:
                 self.skin("pacraft_assets/Spider_front_distress.png")
 
     def reset(self, speed: float) -> None:
+        """Reset ghost values."""
+
         self.col = self.home_col
         self.row = self.home_row
         self.state = "wait"
@@ -78,6 +88,8 @@ class Ghost:
         self.speed = speed
 
     def open_directions(self, maze: list[list[int]]) -> list[str]:
+        """Open directions."""
+
         options = [
             name for name, (_, _, bit) in DIRECTIONS.items()
             if not maze[self.row][self.col] & bit
@@ -90,6 +102,8 @@ class Ghost:
         self, player: tuple[int, int], player_dir: str,
         blinky: tuple[int, int]
     ) -> tuple[int, int]:
+        """Chase target."""
+
         p_col, p_row = player
         d_row, d_col, _ = DIRECTIONS[player_dir]
         if self.name == "BLINKY":
@@ -110,6 +124,7 @@ class Ghost:
     ) -> dict[tuple[int, int], tuple[int, str | None]]:
         """Path length from start to every reachable cell, plus the first
         direction to take from start to get there."""
+
         rows, cols = len(maze), len(maze[0])
         seen: dict[tuple[int, int], tuple[int, str | None]] = {
             start: (0, None)
@@ -134,6 +149,8 @@ class Ghost:
         self, maze: list[list[int]], options: list[str],
         target: tuple[int, int], player: tuple[int, int]
     ) -> str:
+        """Choose direction."""
+
         if self.state == "edible":
             from_player = self.bfs(maze, player)
 
@@ -161,6 +178,8 @@ class Ghost:
         player: tuple[int, int], player_dir: str,
         blinky: tuple[int, int]
     ) -> None:
+        """Update sprite."""
+
         if self.state == "wait":
             self.wait_time += dt
             if self.wait_time >= self.start_delay:
@@ -202,16 +221,22 @@ class Ghost:
 
 
 class Ghosts:
+    """Ghosts main class."""
+
     def __init__(
         self, maze: list[list[int]],
         cell_size: int, speed: int = 3
     ) -> None:
+        """Initialize class."""
+
         self.maze = maze
         self.cell_size = cell_size
         self.speed = speed
         self.ghosts = self.spawn_ghosts()
 
     def spawn_ghosts(self) -> list[Ghost]:
+        """Spawn ghosts."""
+
         cols = len(self.maze[0])
         rows = len(self.maze)
         ghosts: list[Ghost] = []
@@ -271,6 +296,8 @@ class Ghosts:
         self, dt: float, player: tuple[int, int], player_dir: str,
         dots_left: float
     ) -> None:
+        """Update sprite."""
+
         blinky = next(g for g in self.ghosts if g.name == "BLINKY")
         if dots_left < 0.15:
             blinky.speed = self.speed * 1.4
@@ -282,32 +309,40 @@ class Ghosts:
             )
 
     def draw(self, surface: pygame.Surface, origin: tuple[int, int]) -> None:
+        """Draw sprite."""
+
         for ghost in self.ghosts:
             ghost.draw(surface, origin, self.cell_size)
 
     def always_edible(self) -> None:
+        """Always edible."""
+
         for ghost in self.ghosts:
             ghost.make_edible()
 
-    def not_always_edible(self) -> None:
-        for ghost in self.ghosts:
-            ghost.reset(self.speed)
-            match ghost.name:
-                case "BLINKY":
-                    ghost.skin("pacraft_assets/Enderman_front.png")
-                case "INKY":
-                    ghost.skin("pacraft_assets/Zombie_front.png")
-                case "PINKY":
-                    ghost.skin("pacraft_assets/Skeletion.png")
-                case "CLYDE":
-                    ghost.skin("pacraft_assets/Spider_front.png")
+    # def not_always_edible(self) -> None:
+    #     for ghost in self.ghosts:
+    #         ghost.reset(self.speed)
+    #         match ghost.name:
+    #             case "BLINKY":
+    #                 ghost.skin("pacraft_assets/Enderman_front.png")
+    #             case "INKY":
+    #                 ghost.skin("pacraft_assets/Zombie_front.png")
+    #             case "PINKY":
+    #                 ghost.skin("pacraft_assets/Skeletion.png")
+    #             case "CLYDE":
+    #                 ghost.skin("pacraft_assets/Spider_front.png")
 
     def slow_ghosts_speed(self) -> None:
+        """Slow ghost speed."""
+
         for ghost in self.ghosts:
             if ghost.speed > 0.5:
                 ghost.speed -= 0.5
 
     def random_open_cell(self) -> tuple[int, int]:
+        """Open random cell."""
+
         rows, cols = len(self.maze), len(self.maze[0])
         while True:
             row = random.randrange(rows)
@@ -316,6 +351,8 @@ class Ghosts:
                 return row, col
 
     def add_ghost(self) -> None:
+        """Add ghost."""
+
         template = random.choice(self.ghosts)
         home_row, home_col = self.random_open_cell()
         ghost = Ghost(
@@ -340,14 +377,20 @@ class Ghosts:
         self.ghosts.append(ghost)
 
     def freeze(self) -> None:
+        """Freeze sprites."""
+
         for ghost in self.ghosts:
             ghost.state = "wait"
 
     def unfreeze(self) -> None:
+        """Unfreeze sprites."""
+
         for ghost in self.ghosts:
             ghost.state = "chase"
 
     def collide(self, position: tuple[int, int]) -> tuple[bool, bool]:
+        """Check collision."""
+
         row, col = position
         killed = False
         ate = False

@@ -6,12 +6,18 @@ from .custom_surface import CustomSurface
 
 
 class Highscore(CustomSurface):
+    """Highscore main class."""
+
     def __init__(self, file_path: str, size: Tuple[int, int]) -> None:
+        """Initialize class."""
+
         self.scores: List[Dict[str, Any]] = []
         self.path = file_path
         super().__init__(size)
 
     def print_empty(self) -> None:
+        """Print empty score."""
+
         font = pygame.font.Font(self.font_path, 32)
         font_s = font.render("No highscores :(", True, pygame.Color("white"))
         w, h = self.get_size()
@@ -21,6 +27,8 @@ class Highscore(CustomSurface):
         self.blit(font_s, (title_w, title_h))
 
     def setup(self, window: pygame.Surface) -> None:
+        """Setup surface."""
+
         super().setup(window)
         if os.path.exists(self.path):
             try:
@@ -47,6 +55,8 @@ class Highscore(CustomSurface):
             self.blit(font_s, (score_w, score_h))
 
     def start(self, window: pygame.Surface) -> str:
+        """Start screen."""
+
         self.setup(window)
         run = True
         while run:

@@ -13,15 +13,23 @@ SURFACES = Dict[str, SURFACE]
 
 
 class Game:
+    """Game main class."""
+
     def __init__(self, configs: Config) -> None:
+        """Initialize class."""
+
         self.surfaces: SURFACES = {}
         self.configs = configs
         self.score = 0
 
     def add_surface(self, name: str, surface: SURFACE) -> None:
+        """Add surface."""
+
         self.surfaces[name] = surface
 
     def play_scene(self, window: pygame.Surface, scene: str) -> str:
+        """Play current scene."""
+
         answer = scene.split(":")
         if answer[0] == "exit":
             return scene
@@ -37,6 +45,8 @@ class Game:
             return surface.start(window)
 
     def start(self) -> None:
+        """Start screen."""
+
         pygame.init()
         window = pygame.display.set_mode(flags=pygame.FULLSCREEN)
         pygame.display.set_caption("Pac-Man")

@@ -15,11 +15,14 @@ ANGLES = {"down": 0, "right": 90, "up": 180, "left": 270}
 
 
 class Player:
+    """Player main class."""
+
     def __init__(
         self, maze: list[list[int]], lives: int,
         cell_size: int, speed: float = 4,
-
     ) -> None:
+        """Initialize class."""
+
         self.player_size = cell_size - 8
         self.timer = 0.0
         self.facing = "right"
@@ -34,6 +37,8 @@ class Player:
 
     @staticmethod
     def get_start(maze: list[list[int]]) -> tuple[int, int]:
+        """Get start."""
+
         y = len(maze) // 2
         x = len(maze[0]) // 2
         while maze[y][x] == 15:
@@ -41,6 +46,8 @@ class Player:
         return (y, x)
 
     def change_skin(self, new_image_path: str) -> None:
+        """Change sprite."""
+
         size = self.player_size
         base = pygame.image.load(new_image_path).convert_alpha()
         base_image = pygame.transform.smoothscale(base, (size, size))
@@ -50,10 +57,14 @@ class Player:
         }
 
     def can_move(self, direction: str) -> bool:
+        """Check move."""
+
         _, _, bit = DIRECTIONS[direction]
         return not (self.maze[self.row][self.col] & bit)
 
     def handle_key(self, key: int) -> None:
+        """Handle key."""
+
         keys = {
             pygame.K_UP: "up", pygame.K_w: "up",
             pygame.K_DOWN: "down", pygame.K_s: "down",
@@ -64,6 +75,8 @@ class Player:
             self.next_direction = keys[key]
 
     def move(self, direction: str) -> None:
+        """Move player."""
+
         self.facing = direction
         if self.can_move(direction):
             d_row, d_col, _ = DIRECTIONS[direction]
@@ -71,11 +84,15 @@ class Player:
             self.col += d_col
 
     def increase_speed(self) -> None:
+        """Increase speed."""
+
         if self.speed > 6:
             return
         self.speed += 0.5
 
     def update(self, dt: float) -> None:
+        """Update sprite."""
+
         self.timer += dt
         if self.timer < 1 / self.speed:
             return
@@ -92,6 +109,8 @@ class Player:
 
     def draw(self, surface: pygame.Surface, origin: tuple[int, int],
              cell_size: int) -> None:
+        """Draw sprite."""
+
         if CHEATS["cheater"]:
             self.change_skin("pacraft_assets/Chicken.png")
         img = self.images[self.facing]

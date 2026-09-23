@@ -3,6 +3,8 @@ import json
 
 
 class Parser():
+    """Parser main class."""
+
     highscore_filename: str
     lives: int
     points_per_pacgum: int
@@ -13,6 +15,8 @@ class Parser():
     seed: int
 
     def __init__(self, config_file: str) -> None:
+        """Initialize class."""
+
         print(f"Reading file: {config_file}")
         self.config_data = self.get_config_data(config_file)
         self.parse_args()
@@ -20,6 +24,8 @@ class Parser():
 
     @staticmethod
     def get_config_data(config_file: str) -> dict:
+        """Get config data."""
+
         content = ""
         with open(config_file, 'r') as fd:
             for line in fd:
@@ -39,6 +45,8 @@ class Parser():
         return config_data
 
     def parse_args(self) -> None:
+        """Parse args."""
+
         config_data = self.config_data
         defaults = {
             "highscore_filename": "highscore.json",
@@ -61,6 +69,8 @@ class Parser():
             setattr(self, key, config_data.get(key, default))
 
     def create_config(self) -> Config:
+        """Create config."""
+
         print("Configurations set")
         return Config(
             highscore_filename=self.highscore_filename,

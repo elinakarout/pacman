@@ -17,6 +17,8 @@ CHEATS = {
 
 
 class Config(BaseModel):
+    """Config main class."""
+
     highscore_filename: str
     lives: int
     points_per_pacgum: int
@@ -28,6 +30,8 @@ class Config(BaseModel):
 
     @model_validator(mode='after')
     def verify_values(self) -> Self:
+        """Validate values."""
+
         if self.lives <= 0:
             raise PydanticCustomError(
                 "ValueError",

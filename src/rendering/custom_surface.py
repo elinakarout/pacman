@@ -3,17 +3,25 @@ import pygame
 
 
 class CustomSurface(pygame.Surface):
+    """CustomSurface main class."""
+
     def __init__(self,
                  *args: Any, **kwargs: Any) -> None:
+        """Initialize class."""
+
         super().__init__(*args, **kwargs)
         self.sprites_dir = "./pacraft_assets"
         self.font_path = "src/config/Minecraft.ttf"
 
     def setup(self, window: pygame.Surface) -> None:
+        """Setup surface."""
+
         self.fill((0, 0, 0))
         self.draw_background(window)
 
     def draw_background(self, window: pygame.Surface) -> None:
+        """Draw background."""
+
         cell = pygame.image.load(
             f"{self.sprites_dir}/Grass_background.png").convert_alpha()
         w, h = window.get_size()
