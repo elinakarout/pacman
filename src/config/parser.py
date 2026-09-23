@@ -16,7 +16,6 @@ class Parser():
         print(f"Reading file: {config_file}")
         self.config_data = self.get_config_data(config_file)
         self.parse_args()
-        # self.parse_level_args()
         self.data = self.create_config()
 
     @staticmethod
@@ -39,22 +38,6 @@ class Parser():
             )
         return config_data
 
-    @staticmethod
-    def default_levels(count: int = 3) -> list[dict]:
-        width, height, level_max_time = 21, 21, 90
-        levels = []
-        for _ in range(count):
-            levels.append({
-                "width": width,
-                "height": height,
-                "seed": None,
-                "level_max_time": level_max_time,
-            })
-            width += 2
-            height += 2
-            level_max_time -= 10
-        return levels
-
     def parse_args(self) -> None:
         config_data = self.config_data
         defaults = {
@@ -69,7 +52,7 @@ class Parser():
         }
         for key, default in defaults.items():
             try:
-                config_data[key]
+                config_data[key.lower()]
             except KeyError:
                 print(
                     f"{key} not specified,",

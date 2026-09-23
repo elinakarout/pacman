@@ -130,7 +130,6 @@ class Level(CustomSurface):
                 case "CLYDE":
                     ghost.skin("pacraft_assets/Spider_front.png")
 
-
     def eat_super_pacgum(self, pos: tuple[int, int]) -> None:
         self.super_pacgums.remove(pos)
         self.player.score += self.points_per_super_pacgum
@@ -148,7 +147,7 @@ class Level(CustomSurface):
             self.player.lives += 1
             CHEATS["extra_life"] = False
         if CHEATS["increase_player_speed"]:
-            self.player.speed += 0.5
+            self.player.increase_speed()
             CHEATS["increase_player_speed"] = False
         if CHEATS["skip_level"]:
             self.advance(window)
@@ -207,7 +206,7 @@ class Level(CustomSurface):
             self.pacgums.remove(super_pacgum)
         self.total_pacgums = len(self.pacgums)
 
-    def advance(self, window: pygame.Surface):
+    def advance(self, window: pygame.Surface) -> str:
         if self.current_level == 10:
             return "winner:" + str(self.player.score)
         score = self.player.score
@@ -221,11 +220,12 @@ class Level(CustomSurface):
         self.player.score = score
         self.player.lives = lives
         return ""
-        
 
     def start(self, window: pygame.Surface) -> str:
         for c in CHEATS.keys():
             CHEATS[c] = False
+        self.current_level = 1
+        self.max_time = 100
         self.timer = self.max_time
         self.setup(window)
         self.player.change_skin("pacraft_assets/Steve_front.png")

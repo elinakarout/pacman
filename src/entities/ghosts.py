@@ -44,14 +44,15 @@ class Ghost:
         )
         surface.blit(img, (x, y))
 
-    def skin(self, asset):
-            base = pygame.image.load(asset).convert_alpha()
-            base_image = pygame.transform.smoothscale(base, (self.size,
-                                                             self.size))
-            self.images = {
-                name: pygame.transform.rotate(base_image, angle)
-                for name, angle in ANGLES.items()
-            }
+    def skin(self, asset: str) -> None:
+        base = pygame.image.load(asset).convert_alpha()
+        base_image = pygame.transform.smoothscale(
+            base, (self.size, self.size)
+        )
+        self.images = {
+            name: pygame.transform.rotate(base_image, angle)
+            for name, angle in ANGLES.items()
+        }
 
     def make_edible(self) -> None:
         self.state = "edible"
@@ -303,7 +304,7 @@ class Ghosts:
 
     def slow_ghosts_speed(self) -> None:
         for ghost in self.ghosts:
-            if ghost.speed < 0.5:
+            if ghost.speed > 0.5:
                 ghost.speed -= 0.5
 
     def random_open_cell(self) -> tuple[int, int]:

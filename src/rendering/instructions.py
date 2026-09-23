@@ -10,7 +10,8 @@ class Instructions(CustomSurface):
         self.instructions = [
             "Use UP, DOWN, LEFT, RIGHT to move",
             "Collect pacgums to increase score",
-            "Press ctrl + D to enable cheats",
+            "There might be cheats, try to find them",
+            "Press 'P' to pause/resume",
             "Evade ghosts",
             "Have fun!"
         ]
@@ -23,7 +24,7 @@ class Instructions(CustomSurface):
         for i, ins in enumerate(self.instructions):
             ins_x = (w - ins_size[0]) // 2.5
             ins_y = (h - ins_size[1]) // 5 * (i+2) * 0.50
-            font = pygame.font.Font(self.font_path, 32)
+            font = pygame.font.Font(self.font_path, 40)
             font_s = font.render(f"{i+1}. {ins}", True,
                                  pygame.Color("white"))
             self.blit(font_s, (ins_x, ins_y))

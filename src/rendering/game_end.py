@@ -28,8 +28,8 @@ class GameEnd(CustomSurface):
             lines.append(current)
         return lines
 
-    def setup(self,
-              window: pygame.Surface, result: str, score: int) -> None:
+    def render_end(self,
+                   window: pygame.Surface, result: str, score: int) -> None:
         super().setup(window)
         cheater = CHEATS["cheater"]
         font_size = 150
@@ -77,7 +77,7 @@ class GameEnd(CustomSurface):
 
     def start(self, window: pygame.Surface,
               winner: str, score: int) -> str:
-        self.setup(window, winner, score)
+        self.render_end(window, winner, score)
         run = True
         name = ""
         font = pygame.font.Font(self.font_path, 32)
@@ -104,10 +104,10 @@ class GameEnd(CustomSurface):
                         return "exit"
                     elif e.key == pygame.K_BACKSPACE:
                         name = name[:-1]
-                        self.setup(window, winner, score)
+                        self.render_end(window, winner, score)
                 elif e.type == pygame.TEXTINPUT:
                     name += e.text
-                    self.setup(window, winner, score)
+                    self.render_end(window, winner, score)
             res = font.render(name, True, pygame.Color("white"))
             w, h = window.get_size()
             r_w, r_h = res.get_size()

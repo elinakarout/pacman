@@ -23,11 +23,16 @@ class Highscore(CustomSurface):
     def setup(self, window: pygame.Surface) -> None:
         super().setup(window)
         if os.path.exists(self.path):
-            with open(self.path, "r") as f:
-                self.scores = json.load(f)
-            self.scores = sorted(self.scores,
-                                 key=lambda x: x['score'],
-                                 reverse=True)
+            try:
+                with open(self.path, "r") as f:
+                    self.scores = json.load(f)
+                self.scores = sorted(
+                    self.scores,
+                    key=lambda x: x['score'],
+                    reverse=True
+                )
+            except Exception:
+                self.scores = []
         if not self.scores:
             self.print_empty()
             return
