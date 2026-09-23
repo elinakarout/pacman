@@ -40,6 +40,11 @@ class Level(CustomSurface):
         self.points_per_super_pacgum = configs.points_per_super_pacgum
         self.points_per_ghost = configs.points_per_ghost
         self.font = pygame.font.Font(self.font_path, 40)
+        self.life_lost_sound = pygame.mixer.Sound(
+            "pacraft_assets/audio/life_lost.wav")
+        self.game_over_sound = pygame.mixer.Sound(
+            "pacraft_assets/audio/game_over.wav")
+        pygame.mixer.music.load("pacraft_assets/audio/background.ogg")
 
     def get_center(self, width: int, height: int) -> Tuple[int, int]:
         """Get surface center."""
@@ -130,6 +135,8 @@ class Level(CustomSurface):
     def life_lost(self) -> None:
         """Decrease life."""
 
+        pygame.mixer.music.stop()
+        self.life_lost_sound.play()
         self.player.row, self.player.col = self.player.get_start(self.maze)
         for ghost in self.ghosts.ghosts:
             ghost.reset(self.ghosts.speed)
@@ -142,6 +149,7 @@ class Level(CustomSurface):
                     ghost.skin("pacraft_assets/Skeletion.png")
                 case "CLYDE":
                     ghost.skin("pacraft_assets/Spider_front.png")
+        pygame.mixer.music.play(loops=-1)
 
     def eat_super_pacgum(self, pos: tuple[int, int]) -> None:
         """Eat gum."""
@@ -248,6 +256,7 @@ class Level(CustomSurface):
     def start(self, window: pygame.Surface) -> str:
         """Start screen."""
 
+        pygame.mixer.music.play(loops=-1)
         for c in CHEATS.keys():
             CHEATS[c] = False
         self.current_level = 1
@@ -318,6 +327,8 @@ class Level(CustomSurface):
                 if self.player.lives != 0:
                     self.life_lost()
                 else:
+                    pygame.mixer.music.stop()
+                    self.game_over_sound.play()
                     all_cells = self.width * self.height
                     for i in range(all_cells + 50):
                         self.ghosts.add_ghost()

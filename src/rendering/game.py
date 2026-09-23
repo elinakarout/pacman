@@ -21,6 +21,7 @@ class Game:
         self.surfaces: SURFACES = {}
         self.configs = configs
         self.score = 0
+        pygame.mixer.init()
 
     def add_surface(self, name: str, surface: SURFACE) -> None:
         """Add surface."""
