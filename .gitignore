@@ -8,6 +8,16 @@
 uv.lock
 .venv
 
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# mypy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
 # Unzipped Maze generator
 mazegenerator/
 mazegenerator-2.1.0.dist-info/
