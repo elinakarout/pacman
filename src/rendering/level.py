@@ -210,12 +210,16 @@ class Level(CustomSurface):
     def advance(self, window: pygame.Surface):
         if self.current_level == 10:
             return "winner:" + str(self.player.score)
+        score = self.player.score
+        lives = self.player.lives
         self.current_level += 1
         self.max_time -= 5
         self.timer = self.max_time
         self.maze = MazeGenerator((self.width,
                                   self.height)).maze
         self.setup(window)
+        self.player.score = score
+        self.player.lives = lives
         return ""
         
 
@@ -233,11 +237,12 @@ class Level(CustomSurface):
             self.check_cheats(window)
             if not self.timer:
                 all_cells = self.width * self.height
-                for i in range(all_cells):
+                for i in range(all_cells + 50):
                     self.ghosts.add_ghost()
                     self.ghosts.draw(self, self.center)
                     window.blit(self, (0, 0))
                     pygame.display.update()
+                    pygame.time.delay(1)
                 return "loser:" + str(self.player.score)
             dt = clock.tick(60) / 1000
             events = pygame.event.get()
@@ -288,11 +293,12 @@ class Level(CustomSurface):
                     self.life_lost()
                 else:
                     all_cells = self.width * self.height
-                    for i in range(all_cells):
+                    for i in range(all_cells + 50):
                         self.ghosts.add_ghost()
                         self.ghosts.draw(self, self.center)
                         window.blit(self, (0, 0))
                         pygame.display.update()
+                        pygame.time.delay(1)
                     return "loser:" + str(self.player.score)
             if self.level_passed():
                 game_end = self.advance(window)
