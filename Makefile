@@ -19,4 +19,7 @@ lint:
 	uv run flake8 .
 	uv run mypy .
 
+compile:
+	uv run pyinstaller --onefile --noconsole --add-data="pacraft_assets:." pac-man.py
+
 .PHONY: install run debug clean lint
