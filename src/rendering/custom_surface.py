@@ -11,7 +11,7 @@ class CustomSurface(pygame.Surface):
 
         super().__init__(*args, **kwargs)
         self.sprites_dir = "./pacraft_assets"
-        self.font_path = "src/config/Minecraft.ttf"
+        self.font_path = "pacraft_assets/Minecraft.ttf"
 
     def setup(self, window: pygame.Surface) -> None:
         """Setup surface."""
