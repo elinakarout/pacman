@@ -1,9 +1,3 @@
-# Personal notes
-*.md
-
-# Do not ignore README.md
-!README.md
-
 # uv artifacts
 uv.lock
 .venv
